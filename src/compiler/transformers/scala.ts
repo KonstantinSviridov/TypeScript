@@ -44,17 +44,12 @@ namespace ts {
             } = comments;
 
             const {
-                //write,
+                write,
                 writeLine,
                 //increaseIndent
             } = writer;
 
             console.log(node.kind);
-            console.log("SourceFile: " + SyntaxKind.SourceFile);
-            console.log("Block: " + SyntaxKind.Block);
-            console.log("HERE");
-            writer.write("hi!");
-            console.log("THERE3");
 
             emit(node);
 
@@ -104,7 +99,12 @@ namespace ts {
 
             function emitParameter(node: ParameterDeclaration): void { const { } = node; }
             function emitLiteral(node: LiteralExpression): void { const { } = node; }
-            function emitIdentifier(node: Identifier): void { const { } = node; }
+
+            function emitIdentifier(node: Identifier): void {
+                const { } = node;
+                write(node.text);
+            }
+
             function emitQualifiedName(node: QualifiedName): void  { const { } = node; } 
             function emitComputedPropertyName(node: ComputedPropertyName): void { const { } = node; }
             function emitTypeParameter(node: TypeParameterDeclaration): void { const { } = node; }
@@ -175,6 +175,15 @@ namespace ts {
             function emitModuleDeclaration(node: ModuleDeclaration): void {
                 const { } = node;
                 console.log("emitModuleDeclaration");
+                write("package ");
+                //console.log(node.name);
+                emit(node.name);
+                write(" {");
+                writeLine();
+                //console.log(node.body);
+                emit(node.body);
+                write("}");
+                writeLine();
             }
 
             function emitModuleBlock(node: ModuleBlock): void { const { } = node; }
