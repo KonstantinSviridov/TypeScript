@@ -1759,6 +1759,7 @@ const _super = (function (geti, seti) {
         }
 
         function emitInterfaceDeclaration(node: InterfaceDeclaration) {
+            console.log("interface decl!");
             emitDecorators(node, node.decorators);
             emitModifiers(node, node.modifiers);
             write("interface ");

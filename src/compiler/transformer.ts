@@ -1,5 +1,6 @@
 /// <reference path="visitor.ts" />
 /// <reference path="transformers/ts.ts" />
+/// <reference path="transformers/scala.ts" />
 /// <reference path="transformers/jsx.ts" />
 /// <reference path="transformers/es2017.ts" />
 /// <reference path="transformers/es2016.ts" />
@@ -110,6 +111,7 @@ namespace ts {
         const moduleKind = getEmitModuleKind(compilerOptions);
         const transformers: Transformer[] = [];
 
+        transformers.push(transformScala);
         transformers.push(transformTypeScript);
         transformers.push(moduleTransformerMap[moduleKind] || moduleTransformerMap[ModuleKind.None]);
 
