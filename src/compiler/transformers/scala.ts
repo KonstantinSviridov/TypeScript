@@ -502,7 +502,52 @@ namespace ts {
             }
             
             function emitSwitchStatement(node: SwitchStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.expression);
+                write(" match {");
+                writeLine();
+                const clauses = node.caseBlock.clauses;
+                let alternatives = createNodeArray<Expression>();
+                let hasDefault = false;
+                for (const clause of clauses) {
+                    switch (clause.kind) {
+                        case SyntaxKind.CaseClause:
+                            const caseClause = <CaseClause>clause;
+                            alternatives.push(caseClause.expression);
+                            const statements = caseClause.statements;
+                            if (statements.length) {
+                                write("  case ");
+                                emitList(alternatives, ListFormat.UnionTypeConstituents);
+                                write(" =>");
+                                writeLine();
+                                alternatives = createNodeArray<Expression>();
+                                emitSwitchClauseStatements(statements);
+                            }
+                            break;
+
+                        case SyntaxKind.DefaultClause:
+                            const defaultClause = <DefaultClause>clause;
+                            hasDefault = true;
+                            if (alternatives.length)
+                                console.log("WARNING: discarding alternatives in default");
+                            write("  case _ =>");
+                            writeLine();
+                            emitSwitchClauseStatements(defaultClause.statements);
+
+                        default:
+                            console.log("WARNING: ignoring node of kind " + clause.kind + " in switch clauses");
+                    }
+                }
+                if (!hasDefault) {
+                    write("  case _ =>");
+                    writeLine();
+                }
+                write("}");
+                writeLine();
+            }
+
+            function emitSwitchClauseStatements(statements: NodeArray<Statement>): void {
+                for (let i = 0; i < statements.length && statements[i].kind != SyntaxKind.BreakStatement; ++i)
+                    emit(statements[i]);
             }
             
             function emitLabeledStatement(node: LabeledStatement): void {
@@ -633,10 +678,6 @@ namespace ts {
                     emit(stat);
             }
 
-            function emitCaseBlock(node: CaseBlock): void {
-                console.log("Need to handle node kind " + node.kind);
-            }
-            
             function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void {
                 console.log("Need to handle node kind " + node.kind);
             }
@@ -677,14 +718,6 @@ namespace ts {
                 console.log("Need to handle node kind " + node.kind);
             }
             
-            function emitCaseClause(node: CaseClause): void {
-                console.log("Need to handle node kind " + node.kind);
-            }
-            
-            function emitDefaultClause(node: DefaultClause): void {
-                console.log("Need to handle node kind " + node.kind);
-            }
-
             function emitHeritageClauses(nodes: NodeArray<HeritageClause>): void {
                 if (nodes) {
                     //let first = true;
@@ -1205,8 +1238,6 @@ namespace ts {
                         return emitModuleDeclaration(<ModuleDeclaration>node);
                     case SyntaxKind.ModuleBlock:
                         return emitModuleBlock(<ModuleBlock>node);
-                    case SyntaxKind.CaseBlock:
-                        return emitCaseBlock(<CaseBlock>node);
                     case SyntaxKind.ImportEqualsDeclaration:
                         return emitImportEqualsDeclaration(<ImportEqualsDeclaration>node);
                     case SyntaxKind.ImportDeclaration:
@@ -1303,10 +1334,6 @@ namespace ts {
                         return;
 
                     // Clauses
-                    case SyntaxKind.CaseClause:
-                        return emitCaseClause(<CaseClause>node);
-                    case SyntaxKind.DefaultClause:
-                        return emitDefaultClause(<DefaultClause>node);
                     case SyntaxKind.HeritageClause:
                         return emitHeritageClause(<HeritageClause>node);
                     case SyntaxKind.CatchClause:
