@@ -3467,6 +3467,7 @@ namespace ts {
                     if (isAwaitExpression()) {
                         return parseAwaitExpression();
                     }
+                    return parseIncrementExpression();
                 default:
                     return parseIncrementExpression();
             }
@@ -3502,6 +3503,7 @@ namespace ts {
                     }
                 // We are in JSX context and the token is part of JSXElement.
                 // Fall through
+                    return true;
                 default:
                     return true;
             }
@@ -6406,6 +6408,9 @@ namespace ts {
                                     break;
                                 }
                                 // FALLTHROUGH otherwise to record the * as a comment
+                                state = JSDocState.SavingComments; // leading identifiers start recording as well
+                                pushComment(scanner.getTokenText());
+                                break;
                             default:
                                 state = JSDocState.SavingComments; // leading identifiers start recording as well
                                 pushComment(scanner.getTokenText());

@@ -556,7 +556,9 @@ namespace ts {
                                 write(" =>");
                                 writeLine();
                                 alternatives = createNodeArray<Expression>();
-                                emitSwitchClauseStatements(statements);
+                                const canFallThrough = emitSwitchClauseStatements(statements);
+                                if (canFallThrough)
+                                    console.log("WARNING: non-empty case can fall through");
                             }
                             break;
 
@@ -564,7 +566,7 @@ namespace ts {
                             const defaultClause = <DefaultClause>clause;
                             hasDefault = true;
                             if (alternatives.length)
-                                console.log("WARNING: discarding alternatives in default");
+                                console.log("INFO: discarding alternatives in default");
                             write("  case _ =>");
                             writeLine();
                             emitSwitchClauseStatements(defaultClause.statements);
@@ -579,9 +581,23 @@ namespace ts {
                 writeLine();
             }
 
-            function emitSwitchClauseStatements(statements: NodeArray<Statement>): void {
-                for (let i = 0; i < statements.length && statements[i].kind != SyntaxKind.BreakStatement; ++i)
-                    emit(statements[i]);
+            // returns true if the clause can fall through
+            function emitSwitchClauseStatements(statements: NodeArray<Statement>): boolean {
+                for (const statement of statements) {
+                    switch (statement.kind) {
+                        case SyntaxKind.BreakStatement:
+                            return false;
+                        case SyntaxKind.ContinueStatement:
+                        case SyntaxKind.ReturnStatement:
+                            emit(statement);
+                            writeLine();
+                            return false;
+                        default:
+                            emit(statement);
+                            writeLine();
+                            break;
+                    }
+                }
             }
             
             function emitLabeledStatement(node: LabeledStatement): void {
