@@ -758,6 +758,10 @@ namespace ts {
                 emitExpressionList(node.arguments, ListFormat.CallExpressionArguments);
             }
 
+            function emitDecorators(decorators: NodeArray<Decorator>) {
+                emitList(decorators, ListFormat.Decorators);
+            }
+
             function emitTypeArguments(typeArguments: NodeArray<TypeNode>) {
                 emitList(typeArguments, ListFormat.TypeArguments);
             }
@@ -786,7 +790,63 @@ namespace ts {
             }
             
             function emitArrowFunction(node: ArrowFunction): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitDecorators(node.decorators);
+                emitModifiers(node.modifiers);
+                emitSignatureAndBody(node, emitArrowFunctionHead);
+            }
+
+            function emitArrowFunctionHead(node: ArrowFunction) {
+                emitTypeParameters(node.typeParameters);
+                emitParametersForArrow(node.parameters);
+                write(" => ");
+            }
+
+            function emitParametersForArrow(parameters: NodeArray<ParameterDeclaration>) {
+                if (parameters &&
+                    parameters.length === 1 &&
+                    parameters[0].type === undefined) {
+                    emit(parameters[0]);
+                }
+                else {
+                    emitParameters(parameters);
+                }
+            }
+            
+            function emitParameters(parameters: NodeArray<ParameterDeclaration>) {
+                emitList(parameters, ListFormat.Parameters);
+            }
+            
+            function emitSignatureAndBody(node: FunctionLikeDeclaration, emitSignatureHead: (node: SignatureDeclaration) => void) {
+                const body = node.body;
+                if (body) {
+                    if (isBlock(body)) {
+                        if (getEmitFlags(node) & EmitFlags.ReuseTempVariableScope) {
+                            emitSignatureHead(node);
+                            emitBlockFunctionBody(body);
+                        }
+                        else {
+                            emitSignatureHead(node);
+                            emitBlockFunctionBody(body);
+                        }
+                    }
+                    else {
+                        emitSignatureHead(node);
+                        write(" ");
+                        emitExpression(body);
+                    }
+                }
+                else {
+                    emitSignatureHead(node);
+                    write(";");
+                }
+            }
+
+            function emitBlockFunctionBody(body: Block) {
+                write(" {");
+                writeLine();
+                emitList(body.statements, ListFormat.SingleLineFunctionBodyStatements);
+                writeLine();
+                write("}")
             }
             
             function emitDeleteExpression(node: DeleteExpression): void {
