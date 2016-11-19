@@ -957,17 +957,20 @@ namespace ts {
             }
             
             function emitFunctionExpression(node: FunctionExpression): void {
-                console.log("emitFunctionExpression");
-                console.log("Need to handle node kind " + node.kind);
+                emitFunctionLikeExpression(node);
             }
             
             function emitArrowFunction(node: ArrowFunction): void {
+                emitFunctionLikeExpression(node);
+            }
+
+            function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {
                 emitDecorators(node.decorators);
                 emitModifiers(node.modifiers);
                 emitSignatureAndBody(node, emitArrowFunctionHead);
             }
 
-            function emitArrowFunctionHead(node: ArrowFunction) {
+            function emitArrowFunctionHead(node: FunctionLikeDeclaration) {
                 emitTypeParameters(node.typeParameters);
                 emitParametersForArrow(node.parameters);
                 write(" => ");
