@@ -539,9 +539,7 @@ namespace ts {
                             write("  case _ =>");
                             writeLine();
                             emitSwitchClauseStatements(defaultClause.statements);
-
-                        default:
-                            console.log("WARNING: ignoring node of kind " + clause.kind + " in switch clauses");
+                            break;
                     }
                 }
                 if (!hasDefault) {
