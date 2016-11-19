@@ -736,7 +736,13 @@ namespace ts {
             }
             
             function emitObjectLiteralExpression(node: ObjectLiteralExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                const properties = node.properties;
+                if (properties.length === 0) {
+                    write("new { }");
+                }
+                else {
+                    emitList(properties, ListFormat.ObjectLiteralExpressionProperties);
+                }
             }
             
             function emitPropertyAccessExpression(node: PropertyAccessExpression): void {
