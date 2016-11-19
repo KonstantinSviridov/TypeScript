@@ -217,8 +217,10 @@ namespace ts {
             }
             
             function emitConstructSignature(node: ConstructSignatureDeclaration): void {
-                console.log("emitConstructSignature");
-                console.log("Need to handle node kind " + node.kind);
+                write("  def `new`");
+                emitSignature(node);
+                emitTypeResult(node.type, /*canInfer*/ false);
+                writeLine();
             }
             
             function emitIndexSignature(node: IndexSignatureDeclaration): void {
