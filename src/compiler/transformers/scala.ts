@@ -109,7 +109,11 @@ namespace ts {
             }
 
             function emitParameter(node: ParameterDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitDecorators(node.decorators);
+                emitModifiers(node.modifiers);
+                emit(node.name);
+                emitExpressionWithPrefix(" = ", node.initializer);
+                emitWithPrefix(": ", node.type);
             }
 
             function emitLiteral(node: LiteralExpression): void {
