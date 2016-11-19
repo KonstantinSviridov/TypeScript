@@ -222,8 +222,12 @@ namespace ts {
             }
             
             function emitIndexSignature(node: IndexSignatureDeclaration): void {
-                console.log("emitIndexSignature");
-                console.log("Need to handle node kind " + node.kind);
+                write("  def apply");
+                emitSignature(node);
+                emitTypeResult(node.type, /*canInfer*/ false);
+                writeLine();
+                write("  /* def update() -- if you need it */");
+                writeLine();
             }
             
             function emitTypePredicate(node: TypePredicateNode): void {
