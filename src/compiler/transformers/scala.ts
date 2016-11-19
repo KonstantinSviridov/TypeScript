@@ -1,4 +1,4 @@
-/// <reference path="../factory.ts" />
+253/// <reference path="../factory.ts" />
 /// <reference path="../visitor.ts" />
 
 /*@internal*/
@@ -331,7 +331,8 @@ namespace ts {
             }
             
             function emitTemplateSpan(node: TemplateSpan): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                emit(node.literal);
             }
             
             function emitSemicolonClassElement(): void {
