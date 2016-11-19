@@ -110,10 +110,6 @@ namespace ts {
                 emitWithPrefix(": ", node.type);
             }
 
-            function emitLiteral(node: LiteralExpression): void {
-                console.log("Need to handle node kind " + node.kind);
-            }
-
             function emitIdentifier(node: Identifier): void {
                 write(node.text);
             }
@@ -1083,11 +1079,62 @@ namespace ts {
                 }
             }
 
+            function getLiteralTextOfNode(node: LiteralLikeNode): string {
+                if (node.kind === SyntaxKind.StringLiteral && (<StringLiteral>node).textSourceNode) {
+                    const textSourceNode = (<StringLiteral>node).textSourceNode;
+                    if (isIdentifier(textSourceNode)) {
+                        return "\"" + escapeNonAsciiCharacters(escapeString(getTextOfNode(textSourceNode))) + "\"";
+                    }
+                    else {
+                        return getLiteralTextOfNode(textSourceNode);
+                    }
+                }
+
+                function getQuotedEscapedLiteralText(leftQuote: string, text: string, rightQuote: string) {
+                    return leftQuote + escapeNonAsciiCharacters(escapeString(text)) + rightQuote;
+                }
+
+                // If we can't reach the original source text, use the canonical form if it's a number,
+                // or an escaped quoted form of the original text if it's string-like.
+                switch (node.kind) {
+                    case SyntaxKind.StringLiteral:
+                        return getQuotedEscapedLiteralText('"', node.text, '"');
+                    case SyntaxKind.NoSubstitutionTemplateLiteral:
+                        return getQuotedEscapedLiteralText("`", node.text, "`");
+                    case SyntaxKind.TemplateHead:
+                        return getQuotedEscapedLiteralText("`", node.text, "${");
+                    case SyntaxKind.TemplateMiddle:
+                        return getQuotedEscapedLiteralText("}", node.text, "${");
+                    case SyntaxKind.TemplateTail:
+                        return getQuotedEscapedLiteralText("}", node.text, "`");
+                    case SyntaxKind.NumericLiteral:
+                        return node.text;
+                }
+            }
+
+            function emitLiteral(node: LiteralLikeNode) {
+                write(getLiteralTextOfNode(node));
+            }
+            
+            function emitNumericLiteral(node: NumericLiteral): void {
+                emitLiteral(node);
+            }
+
             function emit(node: Node): void {
                 switch (node.kind) {
                     // SourceFile
                     case SyntaxKind.SourceFile:
                         return emitSourceFile(<SourceFile>node);
+
+                    // Literals
+                    case SyntaxKind.NumericLiteral:
+                        return emitNumericLiteral(<NumericLiteral>node);
+
+                    case SyntaxKind.StringLiteral:
+                    case SyntaxKind.RegularExpressionLiteral:
+                    case SyntaxKind.NoSubstitutionTemplateLiteral:
+                        return emitLiteral(<LiteralExpression>node);
+
 
                     // Pseudo-literals
                     case SyntaxKind.TemplateHead:
@@ -1389,6 +1436,10 @@ namespace ts {
                     // Enum
                     case SyntaxKind.EnumMember:
                         return emitEnumMember(<EnumMember>node);
+
+                    default:
+                        console.log("uknown node kind: " + node.kind);
+                        return;
 
                     // JSDoc nodes (ignored)
                     // Transformation nodes (ignored)
