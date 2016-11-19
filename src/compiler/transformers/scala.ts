@@ -105,8 +105,27 @@ namespace ts {
                 console.log("Need to handle node kind " + node.kind);
             }
 
+            function emitTypeParameters(tparams: NodeArray<TypeParameterDeclaration>): void {
+                if (tparams && tparams.length !== 0) {
+                    write("[");
+                    let first = true;
+                    for (const param of tparams) {
+                        if (first)
+                            first = false;
+                        else
+                            write(", ");
+                        emitTypeParameter(param);
+                    }
+                    write("]");
+                }
+            }
+
             function emitTypeParameter(node: TypeParameterDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.name);
+                if (node.constraint) {
+                    write(" <: ");
+                    emit(node.constraint);
+                }
             }
             
             function emitDecorator(node: Decorator): void {
@@ -394,7 +413,7 @@ namespace ts {
             }
 
             function emitSignature(node: SignatureDeclaration): void {
-                //emitTypeParameters(node.typeParameters);
+                emitTypeParameters(node.typeParameters);
                 emitParameterList(node.parameters);
             }
 
@@ -425,16 +444,31 @@ namespace ts {
             }
 
             function emitClassDeclaration(node: ClassDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("class ");
+                emit(node.name);
+                emitTypeParameters(node.typeParameters);
+                emitHeritageClauses(node.heritageClauses);
+                write(" {");
+                writeLine();
+                for (const member of node.members) {
+                    emit(member);
+                    writeLine();
+                }
+                write("}");
+                writeLine();
             }
 
             function emitInterfaceDeclaration(node: InterfaceDeclaration): void {
-                const { } = node;
                 write("trait ");
                 emit(node.name);
-                //emitTypeParameters(node.typeParameters);
-                write("{");
+                emitTypeParameters(node.typeParameters);
+                emitHeritageClauses(node.heritageClauses);
+                write(" {");
                 writeLine();
+                for (const member of node.members) {
+                    emit(member);
+                    writeLine();
+                }
                 write("}");
                 writeLine();
             }
@@ -518,9 +552,35 @@ namespace ts {
             function emitDefaultClause(node: DefaultClause): void {
                 console.log("Need to handle node kind " + node.kind);
             }
+
+            function emitHeritageClauses(nodes: NodeArray<HeritageClause>): void {
+                if (nodes) {
+                    //let first = true;
+                    for (const node of nodes) {
+                        /*if (first) {
+                            write(" extends ");
+                            first = false;
+                        } else {
+                            write(" with ");
+                        }*/
+                        emitHeritageClause(node);
+                    }
+                }
+            }
             
             function emitHeritageClause(node: HeritageClause): void {
-                console.log("Need to handle node kind " + node.kind);
+                if (node.types) {
+                    let first = true;
+                    for (const type of node.types) {
+                        if (first) {
+                            write(" extends ");
+                            first = false;
+                        } else {
+                            write(" with ");
+                        }
+                        emit(type);
+                    }
+                }
             }
             
             function emitCatchClause(node: CatchClause): void {
