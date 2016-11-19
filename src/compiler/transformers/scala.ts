@@ -771,7 +771,10 @@ namespace ts {
             }
             
             function emitTypeAssertionExpression(node: TypeAssertion): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                write(".asInstanceOf[");
+                emit(node.type);
+                write("]");                
             }
             
             function emitParenthesizedExpression(node: ParenthesizedExpression): void {
@@ -824,6 +827,9 @@ namespace ts {
             
             function emitTemplateExpression(node: TemplateExpression): void {
                 console.log("Need to handle node kind " + node.kind);
+                // write("templateexpr");
+                // emit(node.head);
+                // emitList(node.templateSpans, ListFormat.TemplateExpressionSpans);
             }
             
             function emitYieldExpression(node: YieldExpression): void {
