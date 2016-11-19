@@ -633,9 +633,8 @@ namespace ts {
                 }
             }
             
-            function emitDebuggerStatement(node: DebuggerStatement): void {
-                console.log("emitDebuggerStatement");
-                console.log("Need to handle node kind " + node.kind);
+            function emitDebuggerStatement(): void {
+                write(";");
             }
             
             function emitVariableDeclaration(node: VariableDeclaration): void {
@@ -1439,7 +1438,7 @@ namespace ts {
                     case SyntaxKind.TryStatement:
                         return emitTryStatement(<TryStatement>node);
                     case SyntaxKind.DebuggerStatement:
-                        return emitDebuggerStatement(<DebuggerStatement>node);
+                        return emitDebuggerStatement();
 
                     // Declarations
                     case SyntaxKind.VariableDeclaration:
