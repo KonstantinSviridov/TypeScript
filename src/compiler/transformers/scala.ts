@@ -141,11 +141,26 @@ namespace ts {
             }
             
             function emitPropertySignature(node: PropertySignature): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  var ");
+                emit(node.name);
+                emitTypeResult(node.type, /*canInfer*/ !!node.initializer);
+                if (node.initializer) {
+                    write(" = ");
+                    emit(node.initializer);
+                }
+                writeLine();
             }
             
             function emitPropertyDeclaration(node: PropertyDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  var ");
+                emit(node.name);
+                emitTypeResult(node.type, /*canInfer*/ !!node.initializer);
+                write(" = ");
+                if (node.initializer)
+                    emit(node.initializer);
+                else
+                    write("_");
+                writeLine();
             }
             
             function emitMethodSignature(node: MethodSignature): void {
@@ -478,7 +493,7 @@ namespace ts {
                 write("def ");
                 emit(node.name);
                 emitSignature(node);
-                emitTypeResult(node.type);
+                emitTypeResult(node.type, /*canInfer*/ true);
                 if (node.body) {
                     write(" = ");
                     emit(node.body);
@@ -500,7 +515,7 @@ namespace ts {
                     else
                         write(", ");
                     emit(param.name);
-                    emitTypeResult(param.type);
+                    emitTypeResult(param.type, /*canInfer*/ false);
                     if (param.initializer) {
                         write(" = ");
                         emit(param.initializer);
@@ -509,12 +524,14 @@ namespace ts {
                 write(")");
             }
 
-            function emitTypeResult(type?: TypeNode): void {
-                write(": ");
-                if (type)
-                    emit(type);
-                else
-                    write("Any");
+            function emitTypeResult(type: TypeNode, canInfer: boolean): void {
+                if (type || !canInfer) {
+                    write(": ");
+                    if (type)
+                        emit(type);
+                    else
+                        write("Any");
+                }
             }
 
             function emitClassDeclaration(node: ClassDeclaration): void {
