@@ -782,7 +782,9 @@ namespace ts {
             }
             
             function emitParenthesizedExpression(node: ParenthesizedExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                emitExpression(node.expression);
+                write(")");
             }
             
             function emitFunctionExpression(node: FunctionExpression): void {
