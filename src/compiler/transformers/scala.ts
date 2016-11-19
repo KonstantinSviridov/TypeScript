@@ -46,14 +46,17 @@ namespace ts {
             const {
                 write,
                 writeLine,
-                //increaseIndent
+                increaseIndent,
+                decreaseIndent
             } = writer;
 
             console.log(node.kind);
 
             emit(node);
 
-            function emitTokenText(kind: SyntaxKind): void { const { } = kind; }
+            function emitTokenText(kind: SyntaxKind): void {
+                write(tokenToString(kind));
+            }
 
             function emitSourceFile(node: SourceFile): void {
                 console.log("In emitSourceFile()");
@@ -147,9 +150,39 @@ namespace ts {
             }
 
             function emitIfStatement(node: IfStatement): void {
-                const { } = node;
-                console.log("emitIfStatement");
+                emitTokenText(SyntaxKind.IfKeyword);
+                console.log("emitting if statement!");
+                write(" ");
+                emitTokenText(SyntaxKind.OpenParenToken);
+                emitExpression(node.expression);
+                emitTokenText(SyntaxKind.CloseParenToken);
+                emitEmbeddedStatement(node.thenStatement);
+                if (node.elseStatement) {
+                    writeLine();
+                    emitTokenText(SyntaxKind.ElseKeyword);
+                    if (node.elseStatement.kind === SyntaxKind.IfStatement) {
+                        write(" ");
+                        emit(node.elseStatement);
+                    }
+                    else {
+                        emitEmbeddedStatement(node.elseStatement);
+                    }
+                }
+           }
+
+           function emitEmbeddedStatement(node: Statement) {
+                if (isBlock(node)) {
+                    write(" ");
+                    emit(node);
+                }
+                else {
+                    writeLine();
+                    increaseIndent();
+                    emit(node);
+                    decreaseIndent();
+                }
             }
+            
             function emitDoStatement(node: DoStatement): void { const { } = node; }
             function emitWhileStatement(node: WhileStatement): void { const { } = node; }
             function emitForStatement(node: ForStatement): void { const { } = node; }
@@ -213,9 +246,9 @@ namespace ts {
 
             /*function emitExpressionList(parentNode: Node, children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
                 emitNodeList(emitExpression, parentNode, children, format, start, count);
-            }
+            }*/
 
-            function emitExpression(node: Node): void { emit(node); }*/
+            function emitExpression(node: Node): void { emit(node); }
 
             /*function emitNodeList(emit: (node: Node) => void, parentNode: Node, children: NodeArray<Node>, format: ListFormat, start = 0, count = children ? children.length - start : 0) {
                 const isUndefined = children === undefined;
