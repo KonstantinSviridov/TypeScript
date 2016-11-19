@@ -766,7 +766,12 @@ namespace ts {
             }
             
             function emitPropertyAssignment(node: PropertyAssignment): void {
-                console.log("Need to handle node kind " + node.kind);
+                if (node.initializer) {
+                    write("override val ");
+                    emit(node.name);
+                    write(" = ");
+                    emit(node.initializer);
+                }
             }
             
             function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void {
@@ -1032,7 +1037,10 @@ namespace ts {
                         // Write the delimiter if this is not the first node.
                         if (previousSibling) {
                             write(delimiter);
-                            write(" ");
+                            if (format & ListFormat.MultiLine)
+                                writeLine();
+                            else
+                                write(" ");
                         }
 
                         // Emit this child.
@@ -1434,7 +1442,7 @@ namespace ts {
         IntersectionTypeConstituents = WithDelimited | SpaceBetweenSiblings | SingleLine,
         ObjectBindingPatternElements = SingleLine | AllowTrailingComma | SpaceBetweenBraces | CommaDelimited | SpaceBetweenSiblings,
         ArrayBindingPatternElements = SingleLine | AllowTrailingComma | CommaDelimited | SpaceBetweenSiblings,
-        ObjectLiteralExpressionProperties = PreserveLines | CommaDelimited | SpaceBetweenSiblings | SpaceBetweenBraces | Indented | Braces,
+        ObjectLiteralExpressionProperties = MultiLine | Indented | Braces,
         ArrayLiteralExpressionElements = PreserveLines | CommaDelimited | SpaceBetweenSiblings | AllowTrailingComma | Indented | Parenthesis,
         CallExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis,
         NewExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis | OptionalIfUndefined,
