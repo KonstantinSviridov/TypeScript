@@ -67,14 +67,8 @@ namespace ts {
             }
 
             function emitSourceFile(node: SourceFile): void {
-                console.log("In emitSourceFile()");
-                //emitBodyWithDetachedComments(node, node.statements, emitSourceFileWorker);
-            //}
-                
-            //function emitSourceFileWorker(node: SourceFile) {
-                console.log("In emitSourceFileWorker()");
+                console.log("Processing source file: " + node.fileName);
                 const statements = node.statements;
-                console.log("statement: " + statements);
                 const statementOffset = emitPrologueDirectives(statements);
                 ///const savedTempFlags = tempFlags;
                 //tempFlags = 0;
