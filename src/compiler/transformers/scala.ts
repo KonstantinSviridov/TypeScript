@@ -334,8 +334,9 @@ namespace ts {
             }
             
             function emitLiteralType(node: LiteralTypeNode): void {
-                console.log("emitLiteralType");
-                console.log("Need to handle node kind " + node.kind);
+                write("`");
+                emit(node.literal);
+                write("`");
             }
             
             function emitObjectBindingPattern(node: ObjectBindingPattern): void {
