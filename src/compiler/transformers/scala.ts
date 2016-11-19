@@ -493,12 +493,22 @@ namespace ts {
                 write("}");
             }
             
-            function emitContinueStatement({}: ContinueStatement): void {
-                write("continue;");
+            function emitContinueStatement(node: ContinueStatement): void {
+                if (node.label) {
+                    write("continue ");
+                    emit(node.label);
+                } else {
+                    write("continue");
+                }
             }
             
-            function emitBreakStatement({}: BreakStatement): void {
-                write("break;");
+            function emitBreakStatement(node: BreakStatement): void {
+                if (node.label) {
+                    emit(node.label);
+                    write(".break()");
+                } else {
+                    write("break()");
+                }
             }
             
             function emitReturnStatement(node: ReturnStatement): void {
@@ -559,7 +569,16 @@ namespace ts {
             }
             
             function emitLabeledStatement(node: LabeledStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("val ");
+                emit(node.label);
+                write(" = new scala.util.control.Breaks");
+                writeLine();
+                emit(node.label);
+                write(".breakable {");
+                writeLine();
+                emit(node.statement);
+                writeLine();
+                write("}");
             }
             
             function emitThrowStatement(node: ThrowStatement): void {
