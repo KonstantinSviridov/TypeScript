@@ -22,27 +22,14 @@ namespace ts {
             //const resolver = context.getEmitResolver();
             const writer = createTextWriter(host.getNewLine());
 
-            const sourceMap = createSourceMapWriter(host, writer);
-            /*const {
-                emitNodeWithSourceMap,
-                emitTokenWithSourceMap
-            } = sourceMap;*/
-
-            const comments = createCommentWriter(host, writer, sourceMap);
-            emitNode(writer, node, comments);
+            emitNode(writer, node);
             console.log("emitting scala!");
             
             // Write the output file
             writeFile(host, emitterDiagnostics, targetFileName, writer.getText(), false);
         }
 
-        function emitNode(writer: EmitTextWriter, node: Node, comments: CommentWriter): void {
-            const {
-                //emitNodeWithComments,
-                //emitBodyWithDetachedComments,
-                //emitTrailingCommentsOfPosition
-            } = comments;
-
+        function emitNode(writer: EmitTextWriter, node: Node): void {
             const {
                 write,
                 writeLine
@@ -137,7 +124,29 @@ namespace ts {
             function emitBindingElement(node: BindingElement): void { const { } = node; }
             function emitTemplateSpan(node: TemplateSpan): void { const { } = node; }
             function emitSemicolonClassElement(): void { const { } = node; }
-            function emitBlock(node: Block): void { const { } = node; }
+            
+            function emitBlock(node: Block): void {   
+                if (isSingleLineEmptyBlock(node)) {
+                    emitTokenText(SyntaxKind.OpenBraceToken);
+                    write(" ");
+                    emitTokenText(SyntaxKind.CloseBraceToken);
+                }
+                else {
+                    emitTokenText(SyntaxKind.OpenBraceToken);
+                    emitBlockStatements(node);
+                    emitTokenText(SyntaxKind.CloseBraceToken);
+                }
+            }
+
+            function emitBlockStatements(node: BlockLike) {
+                if (getEmitFlags(node) & EmitFlags.SingleLine) {
+                    emitList(node.statements, ListFormat.SingleLineBlockStatements);
+                }
+                else {
+                    emitList(node.statements, ListFormat.MultiLineBlockStatements);
+                }
+            }
+
             function emitVariableStatement(node: VariableStatement): void { const { } = node; }
             function emitEmptyStatement(): void { const { } = node; }
 
@@ -329,9 +338,9 @@ namespace ts {
             function emitAsExpression(node: AsExpression): void { const { } = node; }
             function emitNonNullExpression(node: NonNullExpression): void { const { } = node; }
 
-            /*function emitList(parentNode: Node, children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
-                emitNodeList(emit, parentNode, children, format, start, count);
-            }*/
+            function emitList(children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
+                emitNodeList(emit, children, format, start, count);
+            }
 
             /*function emitExpressionList(parentNode: Node, children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
                 emitNodeList(emitExpression, parentNode, children, format, start, count);
@@ -339,7 +348,7 @@ namespace ts {
 
             function emitExpression(node: Node): void { emit(node); }
 
-            /*function emitNodeList(emit: (node: Node) => void, parentNode: Node, children: NodeArray<Node>, format: ListFormat, start = 0, count = children ? children.length - start : 0) {
+            function emitNodeList(emit: (node: Node) => void, children: NodeArray<Node>, format: ListFormat, start = 0, count = children ? children.length - start : 0) {
                 const isUndefined = children === undefined;
                 if (isUndefined && format & ListFormat.OptionalIfUndefined) {
                     return;
@@ -364,25 +373,9 @@ namespace ts {
                     }
                 }
                 else {
-                    // Write the opening line terminator or leading whitespace.
-                    const mayEmitInterveningComments = (format & ListFormat.NoInterveningComments) === 0;
-                    let shouldEmitInterveningComments = mayEmitInterveningComments;
-                    if (shouldWriteLeadingLineTerminator(parentNode, children, format)) {
-                        writeLine();
-                        shouldEmitInterveningComments = false;
-                    }
-                    else if (format & ListFormat.SpaceBetweenBraces) {
-                        write(" ");
-                    }
-
-                    // Increase the indent, if requested.
-                    if (format & ListFormat.Indented) {
-                        increaseIndent();
-                    }
-
+                    write(" ");
                     // Emit each child.
                     let previousSibling: Node;
-                    let shouldDecreaseIndentAfterEmit: boolean;
                     const delimiter = getDelimiter(format);
                     for (let i = 0; i < count; i++) {
                         const child = children[start + i];
@@ -390,39 +383,11 @@ namespace ts {
                         // Write the delimiter if this is not the first node.
                         if (previousSibling) {
                             write(delimiter);
-
-                            // Write either a line terminator or whitespace to separate the elements.
-                            if (shouldWriteSeparatingLineTerminator(previousSibling, child, format)) {
-                                // If a synthesized node in a single-line list starts on a new
-                                // line, we should increase the indent.
-                                if ((format & (ListFormat.LinesMask | ListFormat.Indented)) === ListFormat.SingleLine) {
-                                    increaseIndent();
-                                    shouldDecreaseIndentAfterEmit = true;
-                                }
-
-                                writeLine();
-                                shouldEmitInterveningComments = false;
-                            }
-                            else if (previousSibling && format & ListFormat.SpaceBetweenSiblings) {
-                                write(" ");
-                            }
-                        }
-
-                        if (shouldEmitInterveningComments) {
-                            const commentRange = getCommentRange(child);
-                            emitTrailingCommentsOfPosition(commentRange.pos);
-                        }
-                        else {
-                            shouldEmitInterveningComments = mayEmitInterveningComments;
+                            write(" ");
                         }
 
                         // Emit this child.
                         emit(child);
-
-                        if (shouldDecreaseIndentAfterEmit) {
-                            decreaseIndent();
-                            shouldDecreaseIndentAfterEmit = false;
-                        }
 
                         previousSibling = child;
                     }
@@ -433,24 +398,15 @@ namespace ts {
                         write(",");
                     }
 
-                    // Decrease the indent, if requested.
-                    if (format & ListFormat.Indented) {
-                        decreaseIndent();
-                    }
 
                     // Write the closing line terminator or closing whitespace.
-                    if (shouldWriteClosingLineTerminator(parentNode, children, format)) {
-                        writeLine();
-                    }
-                    else if (format & ListFormat.SpaceBetweenBraces) {
-                        write(" ");
-                    }
+                    write(" ");
                 }
 
                 if (format & ListFormat.BracketsMask) {
                     write(getClosingBracket(format));
                 }
-            }*/
+            }
 
             function emit(node: Node): void {
                 console.log("emitting node kind " + node.kind);
@@ -790,7 +746,7 @@ namespace ts {
         return brackets[format & ListFormat.BracketsMask][1];
     }*/
 
-    /*const enum ListFormat {
+    const enum ListFormat {
         None = 0,
 
         // Line separators
@@ -864,5 +820,48 @@ namespace ts {
         TypeParameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | AngleBrackets | Optional,
         Parameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | Parenthesis,
         IndexSignatureParameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | SquareBrackets,
-    }*/
+    }
+
+    function isSingleLineEmptyBlock(block: Block) {
+        return !block.multiLine
+            && isEmptyBlock(block);
+    }
+
+    function isEmptyBlock(block: BlockLike) {
+        return block.statements.length === 0;
+    }
+
+    function createDelimiterMap() {
+        const delimiters: string[] = [];
+        delimiters[ListFormat.None] = "";
+        delimiters[ListFormat.CommaDelimited] = ",";
+        delimiters[ListFormat.BarDelimited] = " |";
+        delimiters[ListFormat.AmpersandDelimited] = " &";
+        return delimiters;
+    }
+
+    function createBracketsMap() {
+        const brackets: string[][] = [];
+        brackets[ListFormat.Braces] = ["{", "}"];
+        brackets[ListFormat.Parenthesis] = ["(", ")"];
+        brackets[ListFormat.AngleBrackets] = ["<", ">"];
+        brackets[ListFormat.SquareBrackets] = ["[", "]"];
+        return brackets;
+    }
+
+    const brackets = createBracketsMap();
+    
+    function getOpeningBracket(format: ListFormat) {
+        return brackets[format & ListFormat.BracketsMask][0];
+    }
+
+    function getClosingBracket(format: ListFormat) {
+        return brackets[format & ListFormat.BracketsMask][1];
+    }
+
+    const delimeters = createDelimiterMap();
+
+    function getDelimiter(format: ListFormat) {
+        return delimeters[format & ListFormat.DelimitersMask];
+    }
 }
