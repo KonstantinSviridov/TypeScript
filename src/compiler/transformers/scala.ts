@@ -347,19 +347,16 @@ namespace ts {
                 write("`");
             }
             
-            function emitObjectBindingPattern(node: ObjectBindingPattern): void {
-                console.log("emitObjectBindingPattern");
-                console.log("Need to handle node kind " + node.kind);
+            function emitObjectBindingPattern({}: ObjectBindingPattern): void {
+                console.log("unreachable: emitObjectBindingPattern");
             }
             
-            function emitArrayBindingPattern(node: ArrayBindingPattern): void {
-                console.log("emitArrayBindingPattern");
-                console.log("Need to handle node kind " + node.kind);
+            function emitArrayBindingPattern({}: ArrayBindingPattern): void {
+                console.log("unreachable: emitArrayBindingPattern");
             }
             
-            function emitBindingElement(node: BindingElement): void {
-                console.log("emitBindingElement");
-                console.log("Need to handle node kind " + node.kind);
+            function emitBindingElement({}: BindingElement): void {
+                console.log("unreachable: emitBindingElement");
             }
             
             function emitTemplateSpan(node: TemplateSpan): void {
@@ -397,9 +394,53 @@ namespace ts {
             }
 
             function emitVariableStatement(node: VariableStatement): void {
-                emitModifiers(node.modifiers);
-                emit(node.declarationList);
-                writeLine();
+                const decls = node.declarationList
+                const varity = isLet(node) ? "var " : isConst(node) ? "val " : "var ";
+                let emitRhs: () => void;
+                for (const decl of decls.declarations) {
+                    emitRhs = () => emitExpressionWithPrefix(" = ", decl.initializer);
+                    function ident(ident: Identifier): void {
+                        emitModifiers(node.modifiers);
+                        write(varity);
+                        emitIdentifier(ident);
+                        emitWithPrefix(": ", decl.type);
+                        emitRhs();
+                        writeLine();
+                    }
+                    const name = decl.name;
+                    switch (name.kind) {
+                        case SyntaxKind.Identifier:                            
+                            ident(<Identifier> name)
+                        case SyntaxKind.ObjectBindingPattern:
+                            const objpat = <ObjectBindingPattern> name;
+                            if (objpat.elements) {
+                                const x = fresh()
+                                write("const " + x);
+                                emitRhs();
+                                writeLine();
+
+                                for (const elem of objpat.elements) {                                    
+                                    switch (elem.name.kind) {
+                                        case SyntaxKind.Identifier:
+                                            const nested = <Identifier> elem.name;
+                                            emitRhs = () => {
+                                                write(" = ");
+                                                write(x + ".");
+                                                emitIdentifier(nested);
+                                                writeLine();
+                                            };
+                                            ident(nested);
+                                            break;
+                                        default:
+                                            console.log("Warning: nested object patterns are not supported")
+                                            break;
+                                    }
+                                }
+                            }
+                        case SyntaxKind.ArrayBindingPattern:
+                            console.log("Warning: array patterns are not supported");
+                    }
+                }
             }
 
             function emitModifiers(modifiers: NodeArray<Modifier>) {
@@ -659,8 +700,7 @@ namespace ts {
             }
             
             function emitVariableDeclarationList(node: VariableDeclarationList): void {
-                write(isLet(node) ? "var " : isConst(node) ? "val " : "var ");
-                emitList(node.declarations, ListFormat.VariableDeclarationList);
+                console.log("unreachable: emitVariableDeclarationList in " + node.parent.kind);
             }
             
             function emitFunctionDeclaration(node: FunctionDeclaration): void {
