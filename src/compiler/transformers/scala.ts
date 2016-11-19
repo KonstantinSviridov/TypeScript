@@ -60,6 +60,12 @@ namespace ts {
                     case SyntaxKind.StringKeyword:
                         write("String");
                         break;
+                    case SyntaxKind.VoidKeyword:
+                        write("Unit");
+                        break;
+                    case SyntaxKind.NeverKeyword:
+                        write("Nothing");
+                        break;
                     default:
                         write(tokenToString(kind));
                         break;
