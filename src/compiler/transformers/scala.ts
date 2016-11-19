@@ -747,11 +747,13 @@ namespace ts {
             }
             
             function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitTokenText(node.operator);
+                emitExpression(node.operand);
             }
             
             function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.operand);
+                emitTokenText(node.operator);
             }
             
             function emitBinaryExpression(node: BinaryExpression): void { 
