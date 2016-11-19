@@ -845,6 +845,12 @@ namespace ts {
                 emitTypeArguments(node.typeArguments);
                 emitExpressionList(node.arguments, ListFormat.NewExpressionArguments);
             }
+
+            function emitTemplateExpression(node: TemplateExpression): void {
+                write("s");
+                emit(node.head);
+                emitList(node.templateSpans, ListFormat.TemplateExpressionSpans);
+            }
             
             function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void {
                 console.log("Need to handle node kind " + node.kind);
@@ -969,14 +975,7 @@ namespace ts {
                 write(" else ");
                 emitExpression(node.whenFalse);                
             }
-            
-            function emitTemplateExpression(node: TemplateExpression): void {
-                console.log("Need to handle node kind " + node.kind);
-                // write("templateexpr");
-                // emit(node.head);
-                // emitList(node.templateSpans, ListFormat.TemplateExpressionSpans);
-            }
-            
+        
             function emitYieldExpression(node: YieldExpression): void {
                 console.log("Need to handle node kind " + node.kind);
             }
@@ -1107,13 +1106,13 @@ namespace ts {
                     case SyntaxKind.StringLiteral:
                         return getQuotedEscapedLiteralText('"', node.text, '"');
                     case SyntaxKind.NoSubstitutionTemplateLiteral:
-                        return getQuotedEscapedLiteralText("`", node.text, "`");
+                        return getQuotedEscapedLiteralText("\"\"\"", node.text, "\"\"\"");
                     case SyntaxKind.TemplateHead:
-                        return getQuotedEscapedLiteralText("`", node.text, "${");
+                        return getQuotedEscapedLiteralText("\"\"\"", node.text, "${");
                     case SyntaxKind.TemplateMiddle:
                         return getQuotedEscapedLiteralText("}", node.text, "${");
                     case SyntaxKind.TemplateTail:
-                        return getQuotedEscapedLiteralText("}", node.text, "`");
+                        return getQuotedEscapedLiteralText("}", node.text, "\"\"\"");
                     case SyntaxKind.NumericLiteral:
                         return node.text;
                 }
