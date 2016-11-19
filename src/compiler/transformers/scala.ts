@@ -934,7 +934,12 @@ namespace ts {
             }
 
             function emitConditionalExpression(node: ConditionalExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("if (")
+                emitExpression(node.condition);
+                write(") ");
+                emitExpression(node.whenTrue);
+                write(" else ");
+                emitExpression(node.whenFalse);                
             }
             
             function emitTemplateExpression(node: TemplateExpression): void {
