@@ -23,7 +23,6 @@ namespace ts {
             const writer = createTextWriter(host.getNewLine());
 
             emitNode(writer, node);
-            console.log("emitting scala!");
             
             // Write the output file
             writeFile(host, emitterDiagnostics, targetFileName, writer.getText(), false);
@@ -557,8 +556,6 @@ namespace ts {
             }
             
             function emitModuleDeclaration(node: ModuleDeclaration): void {
-                const { } = node;
-                console.log("emitModuleDeclaration");
                 write("package ");
                 //console.log(node.name);
                 emit(node.name);
@@ -693,7 +690,10 @@ namespace ts {
             }
             
             function emitElementAccessExpression(node: ElementAccessExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                write("()");
+                emitExpression(node.argumentExpression);
+                write(")");
             }
             
             function emitCallExpression(node: CallExpression): void {
