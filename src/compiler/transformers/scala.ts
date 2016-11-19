@@ -194,7 +194,48 @@ namespace ts {
             function emitDebuggerStatement(node: DebuggerStatement): void { const { } = node; }
             function emitVariableDeclaration(node: VariableDeclaration): void { const { } = node; }
             function emitVariableDeclarationList(node: VariableDeclarationList): void { const { } = node; }
-            function emitFunctionDeclaration(node: FunctionDeclaration): void { const { } = node; }
+
+            function emitFunctionDeclaration(node: FunctionDeclaration): void {
+                write("def ");
+                emit(node.name);
+                emitSignature(node);
+                emitTypeResult(node.type);
+                if (node.body)
+                    emit(node.body);
+                writeLine();
+            }
+
+            function emitSignature(node: SignatureDeclaration): void {
+                //emitTypeParameters(node.typeParameters);
+                emitParameterList(node.parameters);
+            }
+
+            function emitParameterList(parameters: NodeArray<ParameterDeclaration>): void {
+                write("(");
+                let first = true;
+                for (const param of parameters) {
+                    if (first)
+                        first = false;
+                    else
+                        write(", ");
+                    emit(param.name);
+                    emitTypeResult(param.type);
+                    if (param.initializer) {
+                        write(" = ");
+                        emit(param.initializer);
+                    }
+                }
+                write(")");
+            }
+
+            function emitTypeResult(type?: TypeNode): void {
+                write(": ");
+                if (type)
+                    emit(type);
+                else
+                    write("Any");
+            }
+
             function emitClassDeclaration(node: ClassDeclaration): void { const { } = node; }
 
             function emitInterfaceDeclaration(node: InterfaceDeclaration): void {
