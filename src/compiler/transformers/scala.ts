@@ -37,7 +37,14 @@ namespace ts {
 
             console.log(node.kind);
 
+            let counter = 0;
+          
             emit(node);
+  
+            function fresh() {
+               counter += 1;
+               return "fresh" + counter;
+            }
 
             function emitTokenText(kind: SyntaxKind): void {
                 write(tokenToString(kind));
@@ -406,7 +413,17 @@ namespace ts {
             }
             
             function emitForOfStatement(node: ForOfStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                emitExpression(node.expression);
+                const x = fresh();
+                write(").foreach { " + x + " => ");      
+                writeLine();      
+                emitForBinding(node.initializer);
+                write(" = " + x)
+                writeLine();
+                emitEmbeddedStatement(node.statement);
+                writeLine();
+                write("}");
             }
             
             function emitContinueStatement(node: ContinueStatement): void {
