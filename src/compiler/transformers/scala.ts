@@ -14,8 +14,16 @@ namespace ts {
         }
 
         function emitScala(node: SourceFile) {
+            const targetFileName = node.fileName + ".scala";
+            const emitterDiagnostics = createDiagnosticCollection();
+            const host = context.getEmitHost();
+            //const resolver = context.getEmitResolver();
+            const data = "THE DATA";
             const { } = node;
             console.log("emitting scala!");
+            
+            // Write the output file
+            writeFile(host, emitterDiagnostics, targetFileName, data, false);
         }
     }
 }
