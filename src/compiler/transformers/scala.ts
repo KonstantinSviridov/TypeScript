@@ -423,7 +423,17 @@ namespace ts {
             }
             
             function emitForInStatement(node: ForInStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                emitExpression(node.expression);
+                const x = fresh();
+                write(").keys.foreach { " + x + " => ");      
+                writeLine();      
+                emitForBinding(node.initializer);
+                write(" = " + x)
+                writeLine();
+                emitEmbeddedStatement(node.statement);
+                writeLine();
+                write("}");
             }
             
             function emitForOfStatement(node: ForOfStatement): void {
