@@ -221,27 +221,42 @@ namespace ts {
             }
             
             function emitArrayType(node: ArrayTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("Array[");
+                emit(node.elementType);
+                write("]");
             }
             
             function emitTupleType(node: TupleTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                let first = true;
+                for (const item of node.elementTypes) {
+                    if (first)
+                        first = false;
+                    else
+                        write(", ");
+                    emit(item);
+                }
+                write(")");
             }
             
             function emitUnionType(node: UnionTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                emitList(node.types, ListFormat.UnionTypeConstituents);
+                write(")");
             }
             
             function emitIntersectionType(node: IntersectionTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("(");
+                emitList(node.types, ListFormat.IntersectionTypeConstituents);
             }
             
             function emitParenthesizedType(node: ParenthesizedTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.type);
             }
             
             function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.expression);
+                emitTypeArguments(node.typeArguments);
             }
             
             function emitThisType(): void {
@@ -1173,9 +1188,9 @@ namespace ts {
         // Delimiters
         NotDelimited = 0,               // There is no delimiter between list items (default).
         BarDelimited = 1 << 2,          // Each list item is space-and-bar (" |") delimited.
-        AmpersandDelimited = 1 << 3,    // Each list item is space-and-ampersand (" &") delimited.
+        WithDelimited = 1 << 3,         // Each list item is space-and-with (" with") delimited.
         CommaDelimited = 1 << 4,        // Each list item is comma (",") delimited.
-        DelimitersMask = BarDelimited | AmpersandDelimited | CommaDelimited,
+        DelimitersMask = BarDelimited | WithDelimited | CommaDelimited,
 
         AllowTrailingComma = 1 << 5,    // Write a trailing comma (",") if present.
 
@@ -1206,7 +1221,7 @@ namespace ts {
         TypeLiteralMembers = MultiLine | Indented,
         TupleTypeElements = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented,
         UnionTypeConstituents = BarDelimited | SpaceBetweenSiblings | SingleLine,
-        IntersectionTypeConstituents = AmpersandDelimited | SpaceBetweenSiblings | SingleLine,
+        IntersectionTypeConstituents = WithDelimited | SpaceBetweenSiblings | SingleLine,
         ObjectBindingPatternElements = SingleLine | AllowTrailingComma | SpaceBetweenBraces | CommaDelimited | SpaceBetweenSiblings,
         ArrayBindingPatternElements = SingleLine | AllowTrailingComma | CommaDelimited | SpaceBetweenSiblings,
         ObjectLiteralExpressionProperties = PreserveLines | CommaDelimited | SpaceBetweenSiblings | SpaceBetweenBraces | Indented | Braces,
@@ -1231,8 +1246,8 @@ namespace ts {
         HeritageClauseTypes = CommaDelimited | SpaceBetweenSiblings | SingleLine,
         SourceFileStatements = MultiLine | NoTrailingNewLine,
         Decorators = MultiLine | Optional,
-        TypeArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | AngleBrackets | Optional,
-        TypeParameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | AngleBrackets | Optional,
+        TypeArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | SquareBrackets | Optional,
+        TypeParameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | SquareBrackets | Optional,
         Parameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | Parenthesis,
         IndexSignatureParameters = CommaDelimited | SpaceBetweenSiblings | SingleLine | Indented | SquareBrackets,
     }
@@ -1251,7 +1266,7 @@ namespace ts {
         delimiters[ListFormat.None] = "";
         delimiters[ListFormat.CommaDelimited] = ",";
         delimiters[ListFormat.BarDelimited] = " |";
-        delimiters[ListFormat.AmpersandDelimited] = " &";
+        delimiters[ListFormat.WithDelimited] = " with";
         return delimiters;
     }
 
