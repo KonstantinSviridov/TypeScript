@@ -152,6 +152,7 @@ namespace ts {
             }
             
             function emitDecorator(node: Decorator): void {
+                console.log("emitDecorator");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -199,10 +200,12 @@ namespace ts {
             }
             
             function emitConstructor(node: ConstructorDeclaration): void {
+                console.log("emitConstructor");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitAccessorDeclaration(node: AccessorDeclaration): void {
+                console.log("emitAccessorDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -214,10 +217,12 @@ namespace ts {
             }
             
             function emitConstructSignature(node: ConstructSignatureDeclaration): void {
+                console.log("emitConstructSignature");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitIndexSignature(node: IndexSignatureDeclaration): void {
+                console.log("emitIndexSignature");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -260,6 +265,7 @@ namespace ts {
             }
             
             function emitConstructorType(node: ConstructorTypeNode): void {
+                console.log("emitConstructorType");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -314,22 +320,27 @@ namespace ts {
             }
             
             function emitThisType(): void {
+                console.log("emitThisType");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitLiteralType(node: LiteralTypeNode): void {
+                console.log("emitLiteralType");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitObjectBindingPattern(node: ObjectBindingPattern): void {
+                console.log("emitObjectBindingPattern");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitArrayBindingPattern(node: ArrayBindingPattern): void {
+                console.log("emitArrayBindingPattern");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitBindingElement(node: BindingElement): void {
+                console.log("emitBindingElement");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -339,6 +350,7 @@ namespace ts {
             }
             
             function emitSemicolonClassElement(): void {
+                console.log("emitSemicolonClassElement");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -380,7 +392,7 @@ namespace ts {
             }
             
             function emitEmptyStatement(): void {
-                console.log("Need to handle node kind " + node.kind);
+                write(";");
             }
             
             function emitExpressionStatement(node: ExpressionStatement): void {
@@ -521,6 +533,7 @@ namespace ts {
             }
             
             function emitWithStatement(node: WithStatement): void {
+                console.log("emitWhileStatement");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -602,6 +615,7 @@ namespace ts {
             }
             
             function emitDebuggerStatement(node: DebuggerStatement): void {
+                console.log("emitDebuggerStatement");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -733,42 +747,52 @@ namespace ts {
             }
 
             function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void {
+                console.log("emitImportEqualsDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitImportDeclaration(node: ImportDeclaration): void {
+                console.log("emitImportDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitImportClause(node: ImportClause): void {
+                console.log("emitImportClause");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitNamespaceImport(node: NamespaceImport): void {
+                console.log("emitNamespaceImport");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitNamedImports(node: NamedImports): void {
+                console.log("emitNamedImports");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitImportSpecifier(node: ImportSpecifier): void {
+                console.log("emitImportSpecifier");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitExportAssignment(node: ExportAssignment): void {
+                console.log("emitExportAssignment");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitExportDeclaration(node: ExportDeclaration): void {
+                console.log("emitExportDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitNamedExports(node: NamedExports): void {
+                console.log("emitNamedExports");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitExportSpecifier(node: ExportSpecifier): void {
+                console.log("emitExportSpecifier");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -834,6 +858,7 @@ namespace ts {
             }
             
             function emitExternalModuleReference(node: ExternalModuleReference): void {
+                console.log("emitExternalModuleReference");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -895,6 +920,7 @@ namespace ts {
             }
             
             function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void {
+                console.log("emitTaggedTemplateExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -912,6 +938,7 @@ namespace ts {
             }
             
             function emitFunctionExpression(node: FunctionExpression): void {
+                console.log("emitFunctionExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -976,6 +1003,7 @@ namespace ts {
             }
             
             function emitDeleteExpression(node: DeleteExpression): void {
+                console.log("emitDeleteExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -986,10 +1014,12 @@ namespace ts {
             }
             
             function emitVoidExpression(node: VoidExpression): void {
+                console.log("emitVoidExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
             function emitAwaitExpression(node: AwaitExpression): void {
+                console.log("emitAwaitExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -1019,6 +1049,7 @@ namespace ts {
             }
         
             function emitYieldExpression(node: YieldExpression): void {
+                console.log("emitYieldExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -1028,6 +1059,7 @@ namespace ts {
             }
             
             function emitClassExpression(node: ClassExpression): void {
+                console.log("emitClassExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
@@ -1041,6 +1073,7 @@ namespace ts {
             }
             
             function emitNonNullExpression(node: NonNullExpression): void {
+                console.log("emitNonNullExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
             
