@@ -668,7 +668,12 @@ namespace ts {
             }
 
             function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("type ");
+                emit(node.name);
+                emitTypeParameters(node.typeParameters);
+                write(" = ");
+                emit(node.type);
+                writeLine();
             }
             
             function emitEnumDeclaration(node: EnumDeclaration): void {
