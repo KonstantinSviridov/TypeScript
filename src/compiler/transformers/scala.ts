@@ -85,45 +85,145 @@ namespace ts {
                 return statements.length;
             }
 
-            function emitParameter(node: ParameterDeclaration): void { const { } = node; }
-            function emitLiteral(node: LiteralExpression): void { const { } = node; }
+            function emitParameter(node: ParameterDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+
+            function emitLiteral(node: LiteralExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
 
             function emitIdentifier(node: Identifier): void {
                 write(node.text);
             }
 
-            function emitQualifiedName(node: QualifiedName): void  { const { } = node; } 
-            function emitComputedPropertyName(node: ComputedPropertyName): void { const { } = node; }
-            function emitTypeParameter(node: TypeParameterDeclaration): void { const { } = node; }
-            function emitDecorator(node: Decorator): void { const { } = node; }
-            function emitPropertySignature(node: PropertySignature): void { const { } = node; }
-            function emitPropertyDeclaration(node: PropertyDeclaration): void { const { } = node; }
-            function emitMethodSignature(node: MethodSignature): void { const { } = node; }
-            function emitMethodDeclaration(node: MethodDeclaration): void { const { } = node; }
-            function emitConstructor(node: ConstructorDeclaration): void { const { } = node; }
-            function emitAccessorDeclaration(node: AccessorDeclaration): void { const { } = node; }
-            function emitCallSignature(node: CallSignatureDeclaration): void { const { } = node; }
-            function emitConstructSignature(node: ConstructSignatureDeclaration): void { const { } = node; }
-            function emitIndexSignature(node: IndexSignatureDeclaration): void { const { } = node; }
-            function emitTypePredicate(node: TypePredicateNode): void { const { } = node; }
-            function emitTypeReference(node: TypeReferenceNode): void { const { } = node; }
-            function emitFunctionType(node: FunctionTypeNode): void { const { } = node; }
-            function emitConstructorType(node: ConstructorTypeNode): void { const { } = node; }
-            function emitTypeQuery(node: TypeQueryNode): void { const { } = node; }
-            function emitTypeLiteral(node: TypeLiteralNode): void { const { } = node; }
-            function emitArrayType(node: ArrayTypeNode): void { const { } = node; }
-            function emitTupleType(node: TupleTypeNode): void { const { } = node; }
-            function emitUnionType(node: UnionTypeNode): void { const { } = node; }
-            function emitIntersectionType(node: IntersectionTypeNode): void { const { } = node; }
-            function emitParenthesizedType(node: ParenthesizedTypeNode): void { const { } = node; }
-            function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void { const { } = node; }
-            function emitThisType(): void { const { } = node; }
-            function emitLiteralType(node: LiteralTypeNode): void { const { } = node; }
-            function emitObjectBindingPattern(node: ObjectBindingPattern): void { const { } = node; }
-            function emitArrayBindingPattern(node: ArrayBindingPattern): void { const { } = node; }
-            function emitBindingElement(node: BindingElement): void { const { } = node; }
-            function emitTemplateSpan(node: TemplateSpan): void { const { } = node; }
-            function emitSemicolonClassElement(): void { const { } = node; }
+            function emitQualifiedName(node: QualifiedName): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+
+            function emitComputedPropertyName(node: ComputedPropertyName): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+
+            function emitTypeParameter(node: TypeParameterDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitDecorator(node: Decorator): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitPropertySignature(node: PropertySignature): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitPropertyDeclaration(node: PropertyDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitMethodSignature(node: MethodSignature): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitMethodDeclaration(node: MethodDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitConstructor(node: ConstructorDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitAccessorDeclaration(node: AccessorDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitCallSignature(node: CallSignatureDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitConstructSignature(node: ConstructSignatureDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitIndexSignature(node: IndexSignatureDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypePredicate(node: TypePredicateNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypeReference(node: TypeReferenceNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitFunctionType(node: FunctionTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitConstructorType(node: ConstructorTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypeQuery(node: TypeQueryNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypeLiteral(node: TypeLiteralNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitArrayType(node: ArrayTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTupleType(node: TupleTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitUnionType(node: UnionTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitIntersectionType(node: IntersectionTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitParenthesizedType(node: ParenthesizedTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitThisType(): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitLiteralType(node: LiteralTypeNode): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitObjectBindingPattern(node: ObjectBindingPattern): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitArrayBindingPattern(node: ArrayBindingPattern): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitBindingElement(node: BindingElement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTemplateSpan(node: TemplateSpan): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitSemicolonClassElement(): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
             
             function emitBlock(node: Block): void {   
                 if (isSingleLineEmptyBlock(node)) {
@@ -147,9 +247,14 @@ namespace ts {
                 }
             }
 
-            function emitVariableStatement(node: VariableStatement): void { const { } = node; }
-            function emitEmptyStatement(): void { const { } = node; }
-
+            function emitVariableStatement(node: VariableStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitEmptyStatement(): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
             function emitExpressionStatement(node: ExpressionStatement): void {
                 const { } = node;
                 console.log("emitExpressionStatement");
@@ -187,30 +292,79 @@ namespace ts {
                 }
             }
             
-            function emitDoStatement(node: DoStatement): void { const { } = node; }
-            function emitWhileStatement(node: WhileStatement): void { const { } = node; }
-            function emitForStatement(node: ForStatement): void { const { } = node; }
-            function emitForInStatement(node: ForInStatement): void { const { } = node; }
-            function emitForOfStatement(node: ForOfStatement): void { const { } = node; }
-            function emitContinueStatement(node: ContinueStatement): void { const { } = node; }
-            function emitBreakStatement(node: BreakStatement): void { const { } = node; }
-            function emitReturnStatement(node: ReturnStatement): void { const { } = node; }
-            function emitWithStatement(node: WithStatement): void { const { } = node; }
-            function emitSwitchStatement(node: SwitchStatement): void { const { } = node; }
-            function emitLabeledStatement(node: LabeledStatement): void { const { } = node; }
-            function emitThrowStatement(node: ThrowStatement): void { const { } = node; }
-            function emitTryStatement(node: TryStatement): void { const { } = node; }
-            function emitDebuggerStatement(node: DebuggerStatement): void { const { } = node; }
-            function emitVariableDeclaration(node: VariableDeclaration): void { const { } = node; }
-            function emitVariableDeclarationList(node: VariableDeclarationList): void { const { } = node; }
-
+            function emitDoStatement(node: DoStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitWhileStatement(node: WhileStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitForStatement(node: ForStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitForInStatement(node: ForInStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitForOfStatement(node: ForOfStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitContinueStatement(node: ContinueStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitBreakStatement(node: BreakStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitReturnStatement(node: ReturnStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitWithStatement(node: WithStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitSwitchStatement(node: SwitchStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitLabeledStatement(node: LabeledStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitThrowStatement(node: ThrowStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTryStatement(node: TryStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitDebuggerStatement(node: DebuggerStatement): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitVariableDeclaration(node: VariableDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitVariableDeclarationList(node: VariableDeclarationList): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
             function emitFunctionDeclaration(node: FunctionDeclaration): void {
                 write("def ");
                 emit(node.name);
                 emitSignature(node);
                 emitTypeResult(node.type);
-                if (node.body)
+                if (node.body) {
+                    write(" = ");
                     emit(node.body);
+                }
                 writeLine();
             }
 
@@ -245,7 +399,9 @@ namespace ts {
                     write("Any");
             }
 
-            function emitClassDeclaration(node: ClassDeclaration): void { const { } = node; }
+            function emitClassDeclaration(node: ClassDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
 
             function emitInterfaceDeclaration(node: InterfaceDeclaration): void {
                 const { } = node;
@@ -258,9 +414,14 @@ namespace ts {
                 writeLine();
             }
 
-            function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void { const { } = node; }
-            function emitEnumDeclaration(node: EnumDeclaration): void { const { } = node; }
-
+            function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitEnumDeclaration(node: EnumDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
             function emitModuleDeclaration(node: ModuleDeclaration): void {
                 const { } = node;
                 console.log("emitModuleDeclaration");
@@ -281,27 +442,89 @@ namespace ts {
                     emit(stat);
             }
 
-            function emitCaseBlock(node: CaseBlock): void { const { } = node; }
-            function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void { const { } = node; }
-            function emitImportDeclaration(node: ImportDeclaration): void { const { } = node; }
-            function emitImportClause(node: ImportClause): void { const { } = node; }
-            function emitNamespaceImport(node: NamespaceImport): void { const { } = node; }
-            function emitNamedImports(node: NamedImports): void { const { } = node; }
-            function emitImportSpecifier(node: ImportSpecifier): void { const { } = node; }
-            function emitExportAssignment(node: ExportAssignment): void { const { } = node; }
-            function emitExportDeclaration(node: ExportDeclaration): void { const { } = node; }
-            function emitNamedExports(node: NamedExports): void { const { } = node; }
-            function emitExportSpecifier(node: ExportSpecifier): void { const { } = node; }
-            function emitCaseClause(node: CaseClause): void { const { } = node; } 
-            function emitDefaultClause(node: DefaultClause): void { const { } = node; }
-            function emitHeritageClause(node: HeritageClause): void { const { } = node; }
-            function emitCatchClause(node: CatchClause): void { const { } = node; }
-            function emitPropertyAssignment(node: PropertyAssignment): void { const { } = node; }
-            function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void { const { } = node; }
-            function emitEnumMember(node: EnumMember): void { const { } = node; }
-            function emitExternalModuleReference(node: ExternalModuleReference): void { const { } = node; }
-            function emitArrayLiteralExpression(node: ArrayLiteralExpression): void { const { } = node; }
-            function emitObjectLiteralExpression(node: ObjectLiteralExpression): void { const { } = node; }
+            function emitCaseBlock(node: CaseBlock): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitImportDeclaration(node: ImportDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitImportClause(node: ImportClause): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitNamespaceImport(node: NamespaceImport): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitNamedImports(node: NamedImports): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitImportSpecifier(node: ImportSpecifier): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitExportAssignment(node: ExportAssignment): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitExportDeclaration(node: ExportDeclaration): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitNamedExports(node: NamedExports): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitExportSpecifier(node: ExportSpecifier): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitCaseClause(node: CaseClause): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitDefaultClause(node: DefaultClause): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitHeritageClause(node: HeritageClause): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitCatchClause(node: CatchClause): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitPropertyAssignment(node: PropertyAssignment): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitEnumMember(node: EnumMember): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitExternalModuleReference(node: ExternalModuleReference): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitArrayLiteralExpression(node: ArrayLiteralExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitObjectLiteralExpression(node: ObjectLiteralExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
             
             function emitPropertyAccessExpression(node: PropertyAccessExpression): void {
                 emitExpression(node.expression);
@@ -309,20 +532,61 @@ namespace ts {
                 emit(node.name);
             }
             
-            function emitElementAccessExpression(node: ElementAccessExpression): void { const { } = node; }
-            function emitCallExpression(node: CallExpression): void { const { } = node; }
-            function emitNewExpression(node: NewExpression): void { const { } = node; }
-            function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void { const { } = node; }
-            function emitTypeAssertionExpression(node: TypeAssertion): void { const { } = node; }
-            function emitParenthesizedExpression(node: ParenthesizedExpression): void { const { } = node; }
-            function emitFunctionExpression(node: FunctionExpression): void { const { } = node; }
-            function emitArrowFunction(node: ArrowFunction): void { const { } = node; }
-            function emitDeleteExpression(node: DeleteExpression): void { const { } = node; }
-            function emitTypeOfExpression(node: TypeOfExpression): void { const { } = node; }
-            function emitVoidExpression(node: VoidExpression): void { const { } = node; }
-            function emitAwaitExpression(node: AwaitExpression): void { const { } = node; }
-            function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void { const { } = node; }
-            function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void { const { } = node; }
+            function emitElementAccessExpression(node: ElementAccessExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitCallExpression(node: CallExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitNewExpression(node: NewExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypeAssertionExpression(node: TypeAssertion): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitParenthesizedExpression(node: ParenthesizedExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitFunctionExpression(node: FunctionExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitArrowFunction(node: ArrowFunction): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitDeleteExpression(node: DeleteExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTypeOfExpression(node: TypeOfExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitVoidExpression(node: VoidExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitAwaitExpression(node: AwaitExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
             
             function emitBinaryExpression(node: BinaryExpression): void { 
                 emitExpression(node.left);
@@ -330,14 +594,34 @@ namespace ts {
                 emitExpression(node.right);
             }
 
-            function emitConditionalExpression(node: ConditionalExpression): void { const { } = node; }
-            function emitTemplateExpression(node: TemplateExpression): void { const { } = node; }
-            function emitYieldExpression(node: YieldExpression): void { const { } = node; }
-            function emitSpreadElementExpression(node: SpreadElementExpression): void { const { } = node; }
-            function emitClassExpression(node: ClassExpression): void { const { } = node; }
-            function emitAsExpression(node: AsExpression): void { const { } = node; }
-            function emitNonNullExpression(node: NonNullExpression): void { const { } = node; }
-
+            function emitConditionalExpression(node: ConditionalExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitTemplateExpression(node: TemplateExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitYieldExpression(node: YieldExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitSpreadElementExpression(node: SpreadElementExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitClassExpression(node: ClassExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitAsExpression(node: AsExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
+            function emitNonNullExpression(node: NonNullExpression): void {
+                console.log("Need to handle node kind " + node.kind);
+            }
+            
             function emitList(children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
                 emitNodeList(emit, children, format, start, count);
             }
@@ -409,7 +693,6 @@ namespace ts {
             }
 
             function emit(node: Node): void {
-                console.log("emitting node kind " + node.kind);
                 switch (node.kind) {
                     // SourceFile
                     case SyntaxKind.SourceFile:
