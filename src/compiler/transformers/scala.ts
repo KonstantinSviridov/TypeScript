@@ -131,7 +131,7 @@ namespace ts {
             }
 
             function emitComputedPropertyName(node: ComputedPropertyName): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.expression);
             }
 
             function emitTypeParameters(tparams: NodeArray<TypeParameterDeclaration>): void {
@@ -779,9 +779,11 @@ namespace ts {
             
             function emitPropertyAssignment(node: PropertyAssignment): void {
                 if (node.initializer) {
-                    write("override val ");
-                    emit(node.name);
-                    write(" = ");
+                    if (node.name.kind === SyntaxKind.Identifier)
+                        write('"' + (<Identifier>node.name).text + '"');
+                    else
+                        emit(node.name);
+                    write(" -> ");
                     emit(node.initializer);
                 }
             }
@@ -811,12 +813,8 @@ namespace ts {
             
             function emitObjectLiteralExpression(node: ObjectLiteralExpression): void {
                 const properties = node.properties;
-                if (properties.length === 0) {
-                    write("new { }");
-                }
-                else {
-                    emitList(properties, ListFormat.ObjectLiteralExpressionProperties);
-                }
+                write("Map");
+                emitList(properties, ListFormat.ObjectLiteralExpressionProperties);
             }
             
             function emitPropertyAccessExpression(node: PropertyAccessExpression): void {
@@ -1455,7 +1453,7 @@ namespace ts {
         IntersectionTypeConstituents = WithDelimited | SpaceBetweenSiblings | SingleLine,
         ObjectBindingPatternElements = SingleLine | AllowTrailingComma | SpaceBetweenBraces | CommaDelimited | SpaceBetweenSiblings,
         ArrayBindingPatternElements = SingleLine | AllowTrailingComma | CommaDelimited | SpaceBetweenSiblings,
-        ObjectLiteralExpressionProperties = MultiLine | Indented | Braces,
+        ObjectLiteralExpressionProperties = MultiLine | CommaDelimited | Indented | Parenthesis,
         ArrayLiteralExpressionElements = PreserveLines | CommaDelimited | SpaceBetweenSiblings | AllowTrailingComma | Indented | Parenthesis,
         CallExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis,
         NewExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis | OptionalIfUndefined,
