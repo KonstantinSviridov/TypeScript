@@ -200,8 +200,16 @@ namespace ts {
             }
             
             function emitConstructor(node: ConstructorDeclaration): void {
-                console.log("emitConstructor");
-                console.log("Need to handle node kind " + node.kind);
+                write("  def this");
+                emitSignature(node);
+                if (node.body) {
+                    write(" = ");
+                    emit(node.body);
+                } else {
+                    // make it parse in Scala, somehow
+                    write(" = {}");
+                }
+                writeLine();
             }
             
             function emitAccessorDeclaration(node: AccessorDeclaration): void {
