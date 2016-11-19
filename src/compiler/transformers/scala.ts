@@ -28,89 +28,89 @@ namespace ts {
 
         function emitNode(writer: EmitTextWriter, node: Node): void {
             writer.write("hi!");
-            
-            function emitTokenText(kind: SyntaxKind): void { }
-            function emitParameter(node: ParameterDeclaration): void { }
-            function emitLiteral(node: LiteralExpression): void { }
-            function emitIdentifier(node: Identifier): void { }
-            function emitQualifiedName(node: QualifiedName): void  { }
-            function emitComputedPropertyName(node: ComputedPropertyName): void { }
-            function emitTypeParameter(node: TypeParameterDeclaration): void { }
-            function emitDecorator(node: Decorator): void { }
-            function emitPropertySignature(node: PropertySignature): void { }
-            function emitPropertyDeclaration(node: PropertyDeclaration): void { }
-            function emitMethodSignature(node: MethodSignature): void { }
-            function emitMethodDeclaration(node: MethodDeclaration): void { }
-            function emitConstructor(node: ConstructorDeclaration): void { }
-            function emitAccessorDeclaration(node: AccessorDeclaration): void { }
-            function emitCallSignature(node: CallSignatureDeclaration): void { }
-            function emitConstructSignature(node: ConstructSignatureDeclaration): void { }
-            function emitIndexSignature(node: IndexSignatureDeclaration): void { }
-            function emitTypePredicate(node: TypePredicateNode): void { }
-            function emitTypeReference(node: TypeReferenceNode): void { }
-            function emitFunctionType(node: FunctionTypeNode): void { }
-            function emitConstructorType(node: ConstructorTypeNode): void { }
-            function emitTypeQuery(node: TypeQueryNode): void { }
-            function emitTypeLiteral(node: TypeLiteralNode): void { }
-            function emitArrayType(node: ArrayTypeNode): void { }
-            function emitTupleType(node: TupleTypeNode): void { }
-            function emitUnionType(node: UnionTypeNode): void { }
-            function emitIntersectionType(node: IntersectionTypeNode): void { }
-            function emitParenthesizedType(node: ParenthesizedTypeNode): void { }
-            function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void { }
-            function emitThisType(): void { }
-            function emitLiteralType(node: LiteralTypeNode): void { }
-            function emitObjectBindingPattern(node: ObjectBindingPattern): void { }
-            function emitArrayBindingPattern(node: ArrayBindingPattern): void { }
-            function emitBindingElement(node: BindingElement): void { }
-            function emitTemplateSpan(node: TemplateSpan): void { }
-            function emitSemicolonClassElement(): void { }
-            function emitBlock(node: Block): void { }
-            function emitVariableStatement(node: VariableStatement): void { }
-            function emitEmptyStatement(): void { }
-            function emitExpressionStatement(node: ExpressionStatement): void { }
-            function emitIfStatement(node: IfStatement): void { }
-            function emitDoStatement(node: DoStatement): void { }
-            function emitWhileStatement(node: WhileStatement): void { }
-            function emitForStatement(node: ForStatement): void { }
-            function emitForInStatement(node: ForInStatement): void { }
-            function emitForOfStatement(node: ForOfStatement): void { }
-            function emitContinueStatement(node: ContinueStatement): void { }
-            function emitBreakStatement(node: BreakStatement): void { }
-            function emitReturnStatement(node: ReturnStatement): void { }
-            function emitWithStatement(node: WithStatement): void { }
-            function emitSwitchStatement(node: SwitchStatement): void { }
-            function emitLabeledStatement(node: LabeledStatement): void { }
-            function emitThrowStatement(node: ThrowStatement): void { }
-            function emitTryStatement(node: TryStatement): void { }
-            function emitDebuggerStatement(node: DebuggerStatement): void { }
-            function emitVariableDeclaration(node: VariableDeclaration): void { }
-            function emitVariableDeclarationList(node: VariableDeclarationList): void { }
-            function emitFunctionDeclaration(node: FunctionDeclaration): void { }
-            function emitClassDeclaration(node: ClassDeclaration): void { }
-            function emitInterfaceDeclaration(node: InterfaceDeclaration): void { }
-            function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void { }
-            function emitEnumDeclaration(node: EnumDeclaration): void { }
-            function emitModuleDeclaration(node: ModuleDeclaration): void { }
-            function emitModuleBlock(node: ModuleBlock): void { }
-            function emitCaseBlock(node: CaseBlock): void { }
-            function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void { }
-            function emitImportDeclaration(node: ImportDeclaration): void { }
-            function emitImportClause(node: ImportClause): void { }
-            function emitNamespaceImport(node: NamespaceImport): void { }
-            function emitNamedImports(node: NamedImports): void { }
-            function emitImportSpecifier(node: ImportSpecifier): void {}
-            function emitExportAssignment(node: ExportAssignment): void { }
-            function emitExportDeclaration(node: ExportDeclaration): void { }
-            function emitNamedExports(node: NamedExports): void { }
-            function emitExportSpecifier(node: ExportSpecifier): void { }
-            function emitCaseClause(node: CaseClause): void { } 
-            function emitDefaultClause(node: DefaultClause): void { }
-            function emitHeritageClause(node: HeritageClause): void { }
-            function emitCatchClause(node: CatchClause): void { }
-            function emitPropertyAssignment(node: PropertyAssignment): void { }
-            function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void { }
-            function emitEnumMember(node: EnumMember): void { }
+            function emitTokenText(kind: SyntaxKind): void { const { } = kind; }
+            function emitParameter(node: ParameterDeclaration): void { const { } = node; }
+            function emitLiteral(node: LiteralExpression): void { const { } = node; }
+            function emitIdentifier(node: Identifier): void { const { } = node; }
+            function emitQualifiedName(node: QualifiedName): void  { const { } = node; } 
+            function emitComputedPropertyName(node: ComputedPropertyName): void { const { } = node; }
+            function emitTypeParameter(node: TypeParameterDeclaration): void { const { } = node; }
+            function emitDecorator(node: Decorator): void { const { } = node; }
+            function emitPropertySignature(node: PropertySignature): void { const { } = node; }
+            function emitPropertyDeclaration(node: PropertyDeclaration): void { const { } = node; }
+            function emitMethodSignature(node: MethodSignature): void { const { } = node; }
+            function emitMethodDeclaration(node: MethodDeclaration): void { const { } = node; }
+            function emitConstructor(node: ConstructorDeclaration): void { const { } = node; }
+            function emitAccessorDeclaration(node: AccessorDeclaration): void { const { } = node; }
+            function emitCallSignature(node: CallSignatureDeclaration): void { const { } = node; }
+            function emitConstructSignature(node: ConstructSignatureDeclaration): void { const { } = node; }
+            function emitIndexSignature(node: IndexSignatureDeclaration): void { const { } = node; }
+            function emitTypePredicate(node: TypePredicateNode): void { const { } = node; }
+            function emitTypeReference(node: TypeReferenceNode): void { const { } = node; }
+            function emitFunctionType(node: FunctionTypeNode): void { const { } = node; }
+            function emitConstructorType(node: ConstructorTypeNode): void { const { } = node; }
+            function emitTypeQuery(node: TypeQueryNode): void { const { } = node; }
+            function emitTypeLiteral(node: TypeLiteralNode): void { const { } = node; }
+            function emitArrayType(node: ArrayTypeNode): void { const { } = node; }
+            function emitTupleType(node: TupleTypeNode): void { const { } = node; }
+            function emitUnionType(node: UnionTypeNode): void { const { } = node; }
+            function emitIntersectionType(node: IntersectionTypeNode): void { const { } = node; }
+            function emitParenthesizedType(node: ParenthesizedTypeNode): void { const { } = node; }
+            function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void { const { } = node; }
+            function emitThisType(): void { const { } = node; }
+            function emitLiteralType(node: LiteralTypeNode): void { const { } = node; }
+            function emitObjectBindingPattern(node: ObjectBindingPattern): void { const { } = node; }
+            function emitArrayBindingPattern(node: ArrayBindingPattern): void { const { } = node; }
+            function emitBindingElement(node: BindingElement): void { const { } = node; }
+            function emitTemplateSpan(node: TemplateSpan): void { const { } = node; }
+            function emitSemicolonClassElement(): void { const { } = node; }
+            function emitBlock(node: Block): void { const { } = node; }
+            function emitVariableStatement(node: VariableStatement): void { const { } = node; }
+            function emitEmptyStatement(): void { const { } = node; }
+            function emitExpressionStatement(node: ExpressionStatement): void { const { } = node; }
+            function emitIfStatement(node: IfStatement): void { const { } = node; }
+            function emitDoStatement(node: DoStatement): void { const { } = node; }
+            function emitWhileStatement(node: WhileStatement): void { const { } = node; }
+            function emitForStatement(node: ForStatement): void { const { } = node; }
+            function emitForInStatement(node: ForInStatement): void { const { } = node; }
+            function emitForOfStatement(node: ForOfStatement): void { const { } = node; }
+            function emitContinueStatement(node: ContinueStatement): void { const { } = node; }
+            function emitBreakStatement(node: BreakStatement): void { const { } = node; }
+            function emitReturnStatement(node: ReturnStatement): void { const { } = node; }
+            function emitWithStatement(node: WithStatement): void { const { } = node; }
+            function emitSwitchStatement(node: SwitchStatement): void { const { } = node; }
+            function emitLabeledStatement(node: LabeledStatement): void { const { } = node; }
+            function emitThrowStatement(node: ThrowStatement): void { const { } = node; }
+            function emitTryStatement(node: TryStatement): void { const { } = node; }
+            function emitDebuggerStatement(node: DebuggerStatement): void { const { } = node; }
+            function emitVariableDeclaration(node: VariableDeclaration): void { const { } = node; }
+            function emitVariableDeclarationList(node: VariableDeclarationList): void { const { } = node; }
+            function emitFunctionDeclaration(node: FunctionDeclaration): void { const { } = node; }
+            function emitClassDeclaration(node: ClassDeclaration): void { const { } = node; }
+            function emitInterfaceDeclaration(node: InterfaceDeclaration): void { const { } = node; }
+            function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void { const { } = node; }
+            function emitEnumDeclaration(node: EnumDeclaration): void { const { } = node; }
+            function emitModuleDeclaration(node: ModuleDeclaration): void { const { } = node; }
+            function emitModuleBlock(node: ModuleBlock): void { const { } = node; }
+            function emitCaseBlock(node: CaseBlock): void { const { } = node; }
+            function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void { const { } = node; }
+            function emitImportDeclaration(node: ImportDeclaration): void { const { } = node; }
+            function emitImportClause(node: ImportClause): void { const { } = node; }
+            function emitNamespaceImport(node: NamespaceImport): void { const { } = node; }
+            function emitNamedImports(node: NamedImports): void { const { } = node; }
+            function emitImportSpecifier(node: ImportSpecifier): void { const { } = node; }
+            function emitExportAssignment(node: ExportAssignment): void { const { } = node; }
+            function emitExportDeclaration(node: ExportDeclaration): void { const { } = node; }
+            function emitNamedExports(node: NamedExports): void { const { } = node; }
+            function emitExportSpecifier(node: ExportSpecifier): void { const { } = node; }
+            function emitCaseClause(node: CaseClause): void { const { } = node; } 
+            function emitDefaultClause(node: DefaultClause): void { const { } = node; }
+            function emitHeritageClause(node: HeritageClause): void { const { } = node; }
+            function emitCatchClause(node: CatchClause): void { const { } = node; }
+            function emitPropertyAssignment(node: PropertyAssignment): void { const { } = node; }
+            function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void { const { } = node; }
+            function emitEnumMember(node: EnumMember): void { const { } = node; }
+            function emitExternalModuleReference(node: ExternalModuleReference): void { const { } = node; }
 
             switch (node.kind) {
                 // Pseudo-literals
@@ -160,7 +160,7 @@ namespace ts {
                 case SyntaxKind.FromKeyword:
                 case SyntaxKind.GlobalKeyword:
                 case SyntaxKind.OfKeyword:
-                    emitTokenText(kind);
+                    emitTokenText(node.kind);
                     return;
 
                 // Parse tree nodes
