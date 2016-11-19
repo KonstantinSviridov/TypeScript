@@ -45,9 +45,7 @@ namespace ts {
 
             const {
                 write,
-                writeLine,
-                increaseIndent,
-                decreaseIndent
+                writeLine
             } = writer;
 
             console.log(node.kind);
@@ -104,7 +102,6 @@ namespace ts {
             function emitLiteral(node: LiteralExpression): void { const { } = node; }
 
             function emitIdentifier(node: Identifier): void {
-                const { } = node;
                 write(node.text);
             }
 
@@ -177,9 +174,7 @@ namespace ts {
                 }
                 else {
                     writeLine();
-                    increaseIndent();
                     emit(node);
-                    decreaseIndent();
                 }
             }
             
@@ -255,6 +250,37 @@ namespace ts {
             function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void { const { } = node; }
             function emitEnumMember(node: EnumMember): void { const { } = node; }
             function emitExternalModuleReference(node: ExternalModuleReference): void { const { } = node; }
+            function emitArrayLiteralExpression(node: ArrayLiteralExpression): void { const { } = node; }
+            function emitObjectLiteralExpression(node: ObjectLiteralExpression): void { const { } = node; }
+            function emitPropertyAccessExpression(node: PropertyAccessExpression): void { const { } = node; }
+            function emitElementAccessExpression(node: ElementAccessExpression): void { const { } = node; }
+            function emitCallExpression(node: CallExpression): void { const { } = node; }
+            function emitNewExpression(node: NewExpression): void { const { } = node; }
+            function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void { const { } = node; }
+            function emitTypeAssertionExpression(node: TypeAssertion): void { const { } = node; }
+            function emitParenthesizedExpression(node: ParenthesizedExpression): void { const { } = node; }
+            function emitFunctionExpression(node: FunctionExpression): void { const { } = node; }
+            function emitArrowFunction(node: ArrowFunction): void { const { } = node; }
+            function emitDeleteExpression(node: DeleteExpression): void { const { } = node; }
+            function emitTypeOfExpression(node: TypeOfExpression): void { const { } = node; }
+            function emitVoidExpression(node: VoidExpression): void { const { } = node; }
+            function emitAwaitExpression(node: AwaitExpression): void { const { } = node; }
+            function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void { const { } = node; }
+            function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void { const { } = node; }
+            
+            function emitBinaryExpression(node: BinaryExpression): void { 
+                emitExpression(node.left);
+                emitTokenText(node.operatorToken.kind);
+                emitExpression(node.right);
+            }
+
+            function emitConditionalExpression(node: ConditionalExpression): void { const { } = node; }
+            function emitTemplateExpression(node: TemplateExpression): void { const { } = node; }
+            function emitYieldExpression(node: YieldExpression): void { const { } = node; }
+            function emitSpreadElementExpression(node: SpreadElementExpression): void { const { } = node; }
+            function emitClassExpression(node: ClassExpression): void { const { } = node; }
+            function emitAsExpression(node: AsExpression): void { const { } = node; }
+            function emitNonNullExpression(node: NonNullExpression): void { const { } = node; }
 
             /*function emitList(parentNode: Node, children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
                 emitNodeList(emit, parentNode, children, format, start, count);
@@ -604,6 +630,60 @@ namespace ts {
                     // Module references
                     case SyntaxKind.ExternalModuleReference:
                         return emitExternalModuleReference(<ExternalModuleReference>node);
+
+                    // Expressions
+                    case SyntaxKind.ArrayLiteralExpression:
+                        return emitArrayLiteralExpression(<ArrayLiteralExpression>node);
+                    case SyntaxKind.ObjectLiteralExpression:
+                        return emitObjectLiteralExpression(<ObjectLiteralExpression>node);
+                    case SyntaxKind.PropertyAccessExpression:
+                        return emitPropertyAccessExpression(<PropertyAccessExpression>node);
+                    case SyntaxKind.ElementAccessExpression:
+                        return emitElementAccessExpression(<ElementAccessExpression>node);
+                    case SyntaxKind.CallExpression:
+                        return emitCallExpression(<CallExpression>node);
+                    case SyntaxKind.NewExpression:
+                        return emitNewExpression(<NewExpression>node);
+                    case SyntaxKind.TaggedTemplateExpression:
+                        return emitTaggedTemplateExpression(<TaggedTemplateExpression>node);
+                    case SyntaxKind.TypeAssertionExpression:
+                        return emitTypeAssertionExpression(<TypeAssertion>node);
+                    case SyntaxKind.ParenthesizedExpression:
+                        return emitParenthesizedExpression(<ParenthesizedExpression>node);
+                    case SyntaxKind.FunctionExpression:
+                        return emitFunctionExpression(<FunctionExpression>node);
+                    case SyntaxKind.ArrowFunction:
+                        return emitArrowFunction(<ArrowFunction>node);
+                    case SyntaxKind.DeleteExpression:
+                        return emitDeleteExpression(<DeleteExpression>node);
+                    case SyntaxKind.TypeOfExpression:
+                        return emitTypeOfExpression(<TypeOfExpression>node);
+                    case SyntaxKind.VoidExpression:
+                        return emitVoidExpression(<VoidExpression>node);
+                    case SyntaxKind.AwaitExpression:
+                        return emitAwaitExpression(<AwaitExpression>node);
+                    case SyntaxKind.PrefixUnaryExpression:
+                        return emitPrefixUnaryExpression(<PrefixUnaryExpression>node);
+                    case SyntaxKind.PostfixUnaryExpression:
+                        return emitPostfixUnaryExpression(<PostfixUnaryExpression>node);
+                    case SyntaxKind.BinaryExpression:
+                        return emitBinaryExpression(<BinaryExpression>node);
+                    case SyntaxKind.ConditionalExpression:
+                        return emitConditionalExpression(<ConditionalExpression>node);
+                    case SyntaxKind.TemplateExpression:
+                        return emitTemplateExpression(<TemplateExpression>node);
+                    case SyntaxKind.YieldExpression:
+                        return emitYieldExpression(<YieldExpression>node);
+                    case SyntaxKind.SpreadElementExpression:
+                        return emitSpreadElementExpression(<SpreadElementExpression>node);
+                    case SyntaxKind.ClassExpression:
+                        return emitClassExpression(<ClassExpression>node);
+                    case SyntaxKind.OmittedExpression:
+                        return;
+                    case SyntaxKind.AsExpression:
+                        return emitAsExpression(<AsExpression>node);
+                    case SyntaxKind.NonNullExpression:
+                        return emitNonNullExpression(<NonNullExpression>node);
 
                     // JSX (non-expression)
                     case SyntaxKind.JsxText:
