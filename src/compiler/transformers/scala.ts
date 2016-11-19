@@ -299,7 +299,7 @@ namespace ts {
             function emitVariableStatement(node: VariableStatement): void {
                 emitModifiers(node.modifiers);
                 emit(node.declarationList);
-                write(";");
+                writeLine();
             }
 
             function emitModifiers(modifiers: NodeArray<Modifier>) {
@@ -315,12 +315,11 @@ namespace ts {
             
             function emitExpressionStatement(node: ExpressionStatement): void {
                 emitExpression(node.expression);
-                write(";");
+                writeLine();
             }
 
             function emitIfStatement(node: IfStatement): void {
                 emitTokenText(SyntaxKind.IfKeyword);
-                console.log("emitting if statement!");
                 write(" ");
                 emitTokenText(SyntaxKind.OpenParenToken);
                 emitExpression(node.expression);
@@ -362,7 +361,7 @@ namespace ts {
                 write("{");
                 writeLine();
                 emitForBinding(node.initializer);
-                write(";")
+                writeLine();
                 write("while(")
                 emitExpressionWithPrefix(" ", node.condition);
                 write(") {")
