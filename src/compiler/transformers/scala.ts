@@ -678,7 +678,17 @@ namespace ts {
             }
             
             function emitEnumDeclaration(node: EnumDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("sealed abstract class ");
+                emit(node.name);
+                writeLine();
+                write("object ");
+                emit(node.name);
+                write(" {");
+                writeLine();
+                emitList(node.members, ListFormat.EnumMembers);
+                writeLine();
+                write("}");
+                writeLine();
             }
             
             function emitModuleDeclaration(node: ModuleDeclaration): void {
@@ -794,7 +804,10 @@ namespace ts {
             }
             
             function emitEnumMember(node: EnumMember): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  case object ");
+                emit(node.name);
+                write(" extends ");
+                emit((<EnumDeclaration>node.parent).name);
             }
             
             function emitExternalModuleReference(node: ExternalModuleReference): void {
@@ -1528,7 +1541,7 @@ namespace ts {
         ClassHeritageClauses = SingleLine | SpaceBetweenSiblings,
         ClassMembers = Indented | MultiLine,
         InterfaceMembers = Indented | MultiLine,
-        EnumMembers = CommaDelimited | Indented | MultiLine,
+        EnumMembers = Indented | MultiLine,
         CaseBlockClauses = Indented | MultiLine,
         NamedImportsOrExportsElements = CommaDelimited | SpaceBetweenSiblings | AllowTrailingComma | SingleLine | SpaceBetweenBraces,
         JsxElementChildren = SingleLine | NoInterveningComments,
