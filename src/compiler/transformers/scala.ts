@@ -420,11 +420,23 @@ namespace ts {
             }
             
             function emitDoStatement(node: DoStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("do {");
+                writeLine();
+                emit(node.statement);
+                writeLine();
+                write("} while (");
+                emit(node.expression);
+                write(")");
             }
             
             function emitWhileStatement(node: WhileStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("while (");
+                emit(node.expression);
+                write(") {");
+                writeLine();
+                emit(node.statement);
+                writeLine();
+                write("}");
             }
             
             function emitForStatement(node: ForStatement): void {
