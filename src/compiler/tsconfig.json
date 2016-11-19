@@ -11,7 +11,7 @@
         "stripInternal": true,
         "target": "es5",
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": false
     },
     "files": [
         "core.ts",
