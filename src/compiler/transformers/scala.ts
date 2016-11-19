@@ -989,7 +989,8 @@ namespace ts {
             }
             
             function emitSpreadElementExpression(node: SpreadElementExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                write(": _*");
             }
             
             function emitClassExpression(node: ClassExpression): void {
