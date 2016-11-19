@@ -403,7 +403,9 @@ namespace ts {
             }
             
             function emitReturnStatement(node: ReturnStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitTokenText(SyntaxKind.ReturnKeyword);
+                emitExpressionWithPrefix(" ", node.expression);
+                writeLine();
             }
             
             function emitWithStatement(node: WithStatement): void {
