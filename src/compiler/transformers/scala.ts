@@ -98,7 +98,9 @@ namespace ts {
             }
 
             function emitQualifiedName(node: QualifiedName): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.left);
+                write(".");
+                emit(node.right);
             }
 
             function emitComputedPropertyName(node: ComputedPropertyName): void {
