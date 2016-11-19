@@ -537,7 +537,13 @@ namespace ts {
             }
             
             function emitCallExpression(node: CallExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                emitTypeArguments(node.typeArguments);
+                emitExpressionList(node.arguments, ListFormat.CallExpressionArguments);
+            }
+
+            function emitTypeArguments(typeArguments: NodeArray<TypeNode>) {
+                emitList(typeArguments, ListFormat.TypeArguments);
             }
             
             function emitNewExpression(node: NewExpression): void {
@@ -626,9 +632,9 @@ namespace ts {
                 emitNodeList(emit, children, format, start, count);
             }
 
-            /*function emitExpressionList(parentNode: Node, children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
-                emitNodeList(emitExpression, parentNode, children, format, start, count);
-            }*/
+            function emitExpressionList(children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
+                emitNodeList(emitExpression, children, format, start, count);
+            }
 
             function emitExpression(node: Node): void { emit(node); }
 
@@ -1011,23 +1017,6 @@ namespace ts {
             }
         }
     }
-
-    /*function createBracketsMap() {
-        const brackets: string[][] = [];
-        brackets[ListFormat.Braces] = ["{", "}"];
-        brackets[ListFormat.Parenthesis] = ["(", ")"];
-        brackets[ListFormat.AngleBrackets] = ["<", ">"];
-        brackets[ListFormat.SquareBrackets] = ["[", "]"];
-        return brackets;
-    }
-
-    function getOpeningBracket(format: ListFormat) {
-        return brackets[format & ListFormat.BracketsMask][0];
-    }
-
-    function getClosingBracket(format: ListFormat) {
-        return brackets[format & ListFormat.BracketsMask][1];
-    }*/
 
     const enum ListFormat {
         None = 0,
