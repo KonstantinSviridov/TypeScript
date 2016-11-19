@@ -46,7 +46,24 @@ namespace ts {
             }
 
             function emitTokenText(kind: SyntaxKind): void {
-                write(tokenToString(kind));
+                switch (kind) {
+                    case SyntaxKind.AnyKeyword:
+                        write("Any");
+                        break;
+                    case SyntaxKind.BooleanKeyword:
+                        write("Boolean");
+                        break;
+                    case SyntaxKind.NumberKeyword:
+                        // In theory, Double, but we expect and hope most numbers are actually Ints
+                        write("Int");
+                        break;
+                    case SyntaxKind.StringKeyword:
+                        write("String");
+                        break;
+                    default:
+                        write(tokenToString(kind));
+                        break;
+                }
             }
 
             function emitSourceFile(node: SourceFile): void {
@@ -164,11 +181,23 @@ namespace ts {
             }
             
             function emitMethodSignature(node: MethodSignature): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  def ");
+                emit(node.name);
+                emitSignature(node);
+                emitTypeResult(node.type, /*canInfer*/ false);
+                writeLine();
             }
             
             function emitMethodDeclaration(node: MethodDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  def ");
+                emit(node.name);
+                emitSignature(node);
+                emitTypeResult(node.type, /*canInfer*/ !!node.body);
+                if (node.body) {
+                    write(" = ");
+                    emit(node.body);
+                }
+                writeLine();
             }
             
             function emitConstructor(node: ConstructorDeclaration): void {
@@ -503,7 +532,7 @@ namespace ts {
                 write("def ");
                 emit(node.name);
                 emitSignature(node);
-                emitTypeResult(node.type, /*canInfer*/ true);
+                emitTypeResult(node.type, /*canInfer*/ !!node.body);
                 if (node.body) {
                     write(" = ");
                     emit(node.body);
@@ -540,7 +569,7 @@ namespace ts {
                     if (type)
                         emit(type);
                     else
-                        write("Any");
+                        write("Nothing");
                 }
             }
 
