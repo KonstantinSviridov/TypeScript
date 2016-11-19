@@ -563,7 +563,8 @@ namespace ts {
             }
             
             function emitThrowStatement(node: ThrowStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("throw");
+                emitExpressionWithPrefix(" ", node.expression);
             }
             
             function emitTryStatement(node: TryStatement): void {
@@ -1009,7 +1010,12 @@ namespace ts {
             }
             
             function emitAsExpression(node: AsExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitExpression(node.expression);
+                if (node.type) {
+                    write(".asInstanceOf[");
+                    emit(node.type);
+                    write("]");
+                }
             }
             
             function emitNonNullExpression(node: NonNullExpression): void {
