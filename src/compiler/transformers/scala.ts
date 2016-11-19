@@ -171,9 +171,10 @@ namespace ts {
             }
             
             function emitTypePredicate(node: TypePredicateNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                const {} = node;
+                write("Boolean");
             }
-            
+
             function emitTypeReference(node: TypeReferenceNode): void {
                 emit(node.typeName);
                 if (node.typeArguments && node.typeArguments.length !== 0) {
@@ -181,9 +182,9 @@ namespace ts {
                     write("[");
                     for (const typeArg of node.typeArguments) {
                         if (first)
-                            write(", ");
-                        else
                             first = false;
+                        else
+                            write(", ");
                         emit(typeArg);
                     }
                     write("]");
@@ -191,7 +192,20 @@ namespace ts {
             }
             
             function emitFunctionType(node: FunctionTypeNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("((");
+                if (node.parameters) {
+                    let first = true;
+                    for (const param of node.parameters) {
+                        if (first)
+                            first = false;
+                        else
+                            write(", ");
+                        emit(param.type);
+                    }
+                }
+                write(") => ");
+                emit(node.type);
+                write(")");
             }
             
             function emitConstructorType(node: ConstructorTypeNode): void {
