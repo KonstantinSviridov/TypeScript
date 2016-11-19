@@ -34,8 +34,6 @@ namespace ts {
                 writeLine
             } = writer;
 
-            console.log(node.kind);
-
             let counter = 0;
           
             emit(node);
@@ -268,7 +266,9 @@ namespace ts {
             }
             
             function emitTypeLiteral(node: TypeLiteralNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("{");
+                emitList(node.members, ListFormat.TypeLiteralMembers);
+                write("}");
             }
             
             function emitArrayType(node: ArrayTypeNode): void {
