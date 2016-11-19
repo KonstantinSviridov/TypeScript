@@ -252,7 +252,13 @@ namespace ts {
             function emitExternalModuleReference(node: ExternalModuleReference): void { const { } = node; }
             function emitArrayLiteralExpression(node: ArrayLiteralExpression): void { const { } = node; }
             function emitObjectLiteralExpression(node: ObjectLiteralExpression): void { const { } = node; }
-            function emitPropertyAccessExpression(node: PropertyAccessExpression): void { const { } = node; }
+            
+            function emitPropertyAccessExpression(node: PropertyAccessExpression): void {
+                emitExpression(node.expression);
+                write(".");
+                emit(node.name);
+            }
+            
             function emitElementAccessExpression(node: ElementAccessExpression): void { const { } = node; }
             function emitCallExpression(node: CallExpression): void { const { } = node; }
             function emitNewExpression(node: NewExpression): void { const { } = node; }
