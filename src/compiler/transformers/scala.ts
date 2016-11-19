@@ -1003,8 +1003,19 @@ namespace ts {
             }
             
             function emitDeleteExpression(node: DeleteExpression): void {
-                console.log("emitDeleteExpression");
-                console.log("Need to handle node kind " + node.kind);
+                const expr = node.expression;
+                switch (expr.kind) {
+                    case SyntaxKind.ElementAccessExpression:
+                        const elemAccessExpr = <ElementAccessExpression>expr;
+                        emitExpression(elemAccessExpr.expression);
+                        write(".remove(");
+                        emitExpression(elemAccessExpr.argumentExpression);
+                        write(")");
+                        break;
+
+                    default:
+                        console.log("Need to handle emitDeleteExpression() with " + expr.kind);
+                }
             }
             
             function emitTypeOfExpression(node: TypeOfExpression): void {
