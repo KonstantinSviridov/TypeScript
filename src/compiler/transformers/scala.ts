@@ -783,7 +783,8 @@ namespace ts {
             }
             
             function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void {
-                console.log("Need to handle node kind " + node.kind);
+                write('"' + node.name.text + '" -> ');
+                emit(node.name);
             }
             
             function emitEnumMember(node: EnumMember): void {
