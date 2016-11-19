@@ -312,8 +312,8 @@ namespace ts {
             }
             
             function emitExpressionStatement(node: ExpressionStatement): void {
-                const { } = node;
-                console.log("emitExpressionStatement");
+                emitExpression(node.expression);
+                write(";");
             }
 
             function emitIfStatement(node: IfStatement): void {
