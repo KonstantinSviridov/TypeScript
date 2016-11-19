@@ -173,7 +173,19 @@ namespace ts {
             }
             
             function emitTypeReference(node: TypeReferenceNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.typeName);
+                if (node.typeArguments && node.typeArguments.length !== 0) {
+                    let first = true;
+                    write("[");
+                    for (const typeArg of node.typeArguments) {
+                        if (first)
+                            write(", ");
+                        else
+                            first = false;
+                        emit(typeArg);
+                    }
+                    write("]");
+                }
             }
             
             function emitFunctionType(node: FunctionTypeNode): void {
