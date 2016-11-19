@@ -483,12 +483,12 @@ namespace ts {
                 write("}");
             }
             
-            function emitContinueStatement(node: ContinueStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+            function emitContinueStatement({}: ContinueStatement): void {
+                write("continue;");
             }
             
-            function emitBreakStatement(node: BreakStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+            function emitBreakStatement({}: BreakStatement): void {
+                write("break;");
             }
             
             function emitReturnStatement(node: ReturnStatement): void {
