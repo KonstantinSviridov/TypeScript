@@ -267,7 +267,16 @@ namespace ts {
             }
 
             function emitVariableStatement(node: VariableStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                emitModifiers(node.modifiers);
+                emit(node.declarationList);
+                write(";");
+            }
+
+            function emitModifiers(modifiers: NodeArray<Modifier>) {
+                if (modifiers && modifiers.length) {
+                    emitList(modifiers, ListFormat.Modifiers);
+                    write(" ");
+                }
             }
             
             function emitEmptyStatement(): void {
@@ -393,11 +402,14 @@ namespace ts {
             }
             
             function emitVariableDeclaration(node: VariableDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                emit(node.name);
+                emitWithPrefix(": ", node.type);
+                emitExpressionWithPrefix(" = ", node.initializer);
             }
             
             function emitVariableDeclarationList(node: VariableDeclarationList): void {
-                console.log("Need to handle node kind " + node.kind);
+                write(isLet(node) ? "var " : isConst(node) ? "val " : "var ");
+                emitList(node.declarations, ListFormat.VariableDeclarationList);
             }
             
             function emitFunctionDeclaration(node: FunctionDeclaration): void {
@@ -782,7 +794,11 @@ namespace ts {
                     write(getClosingBracket(format));
                 }
             }
-
+            
+            function emitWithPrefix(prefix: string, node: Node) {
+                emitNodeWithPrefix(prefix, node, emit);
+            }
+            
             function emitExpressionWithPrefix(prefix: string, node: Node) {
                 emitNodeWithPrefix(prefix, node, emitExpression);
             }
