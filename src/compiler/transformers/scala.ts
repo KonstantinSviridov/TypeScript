@@ -1005,6 +1005,14 @@ namespace ts {
             function emitDeleteExpression(node: DeleteExpression): void {
                 const expr = node.expression;
                 switch (expr.kind) {
+                    case SyntaxKind.PropertyAccessExpression:
+                        const propAccessExpr = <PropertyAccessExpression>expr;
+                        emitExpression(propAccessExpr.expression);
+                        write(".remove(");
+                        write('"' + propAccessExpr.name.text + '"');
+                        write(")");
+                        break;
+
                     case SyntaxKind.ElementAccessExpression:
                         const elemAccessExpr = <ElementAccessExpression>expr;
                         emitExpression(elemAccessExpr.expression);
