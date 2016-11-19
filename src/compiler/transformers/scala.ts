@@ -301,7 +301,32 @@ namespace ts {
             }
             
             function emitForStatement(node: ForStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("{");
+                writeLine();
+                emitForBinding(node.initializer);
+                write(";")
+                write("while(")
+                emitExpressionWithPrefix(" ", node.condition);
+                write(") {")
+                writeLine();
+                emitEmbeddedStatement(node.statement);
+                writeLine();
+                emitExpressionWithPrefix(" ", node.incrementor);
+                writeLine();
+                write("}")
+                writeLine();
+                write("}")
+            }
+
+            function emitForBinding(node: VariableDeclarationList | Expression) {
+                if (node !== undefined) {
+                    if (node.kind === SyntaxKind.VariableDeclarationList) {
+                        emit(node);
+                    }
+                    else {
+                        emitExpression(<Expression>node);
+                    }
+                }
             }
             
             function emitForInStatement(node: ForInStatement): void {
@@ -695,6 +720,17 @@ namespace ts {
 
                 if (format & ListFormat.BracketsMask) {
                     write(getClosingBracket(format));
+                }
+            }
+
+            function emitExpressionWithPrefix(prefix: string, node: Node) {
+                emitNodeWithPrefix(prefix, node, emitExpression);
+            }
+
+            function emitNodeWithPrefix(prefix: string, node: Node, emit: (node: Node) => void) {
+                if (node) {
+                    write(prefix);
+                    emit(node);
                 }
             }
 
