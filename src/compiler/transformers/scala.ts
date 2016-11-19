@@ -201,7 +201,18 @@ namespace ts {
             function emitVariableDeclarationList(node: VariableDeclarationList): void { const { } = node; }
             function emitFunctionDeclaration(node: FunctionDeclaration): void { const { } = node; }
             function emitClassDeclaration(node: ClassDeclaration): void { const { } = node; }
-            function emitInterfaceDeclaration(node: InterfaceDeclaration): void { const { } = node; }
+
+            function emitInterfaceDeclaration(node: InterfaceDeclaration): void {
+                const { } = node;
+                write("trait ");
+                emit(node.name);
+                //emitTypeParameters(node.typeParameters);
+                write("{");
+                writeLine();
+                write("}");
+                writeLine();
+            }
+
             function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void { const { } = node; }
             function emitEnumDeclaration(node: EnumDeclaration): void { const { } = node; }
 
@@ -219,7 +230,12 @@ namespace ts {
                 writeLine();
             }
 
-            function emitModuleBlock(node: ModuleBlock): void { const { } = node; }
+            function emitModuleBlock(node: ModuleBlock): void {
+                const { } = node;
+                for (const stat of node.statements)
+                    emit(stat);
+            }
+
             function emitCaseBlock(node: CaseBlock): void { const { } = node; }
             function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void { const { } = node; }
             function emitImportDeclaration(node: ImportDeclaration): void { const { } = node; }
