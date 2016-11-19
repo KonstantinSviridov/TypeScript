@@ -267,7 +267,9 @@ namespace ts {
             }
             
             function emitTypeQuery(node: TypeQueryNode): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("typeof(");
+                emit(node.exprName);
+                write(")");
             }
             
             function emitTypeLiteral(node: TypeLiteralNode): void {
