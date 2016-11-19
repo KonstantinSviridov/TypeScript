@@ -818,7 +818,10 @@ namespace ts {
             }
             
             function emitNewExpression(node: NewExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("new ");
+                emitExpression(node.expression);
+                emitTypeArguments(node.typeArguments);
+                emitExpressionList(node.arguments, ListFormat.NewExpressionArguments);
             }
             
             function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void {
