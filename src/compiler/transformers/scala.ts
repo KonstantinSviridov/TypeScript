@@ -280,7 +280,9 @@ namespace ts {
                 }
                 else {
                     emitTokenText(SyntaxKind.OpenBraceToken);
+                    writeLine();
                     emitBlockStatements(node);
+                    writeLine();
                     emitTokenText(SyntaxKind.CloseBraceToken);
                 }
             }
