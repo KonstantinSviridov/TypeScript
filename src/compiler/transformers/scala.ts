@@ -207,7 +207,10 @@ namespace ts {
             }
             
             function emitCallSignature(node: CallSignatureDeclaration): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("  def apply");
+                emitSignature(node);
+                emitTypeResult(node.type, /*canInfer*/ false);
+                writeLine();
             }
             
             function emitConstructSignature(node: ConstructSignatureDeclaration): void {
