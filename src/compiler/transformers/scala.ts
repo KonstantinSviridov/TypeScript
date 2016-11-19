@@ -247,7 +247,7 @@ namespace ts {
                 }
             }
             
-            function emitFunctionType(node: FunctionTypeNode): void {
+            function emitFunctionOrConstructorTypeNode(node: FunctionOrConstructorTypeNode): void {
                 write("((");
                 if (node.parameters) {
                     let first = true;
@@ -263,10 +263,13 @@ namespace ts {
                 emit(node.type);
                 write(")");
             }
-            
+
+            function emitFunctionType(node: FunctionTypeNode): void {
+                emitFunctionOrConstructorTypeNode(node);
+            }
+
             function emitConstructorType(node: ConstructorTypeNode): void {
-                console.log("emitConstructorType");
-                console.log("Need to handle node kind " + node.kind);
+                emitFunctionOrConstructorTypeNode(node);
             }
             
             function emitTypeQuery(node: TypeQueryNode): void {
