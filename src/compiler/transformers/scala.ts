@@ -1153,6 +1153,13 @@ namespace ts {
                         return emitIdentifier(<Identifier>node);
 
                     // Reserved words
+                    case SyntaxKind.FalseKeyword:
+                    case SyntaxKind.NullKeyword:
+                    case SyntaxKind.SuperKeyword:
+                    case SyntaxKind.TrueKeyword:
+                    case SyntaxKind.ThisKeyword:
+
+                    // Reserved words
                     case SyntaxKind.ConstKeyword:
                     case SyntaxKind.DefaultKeyword:
                     case SyntaxKind.ExportKeyword:
