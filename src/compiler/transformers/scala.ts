@@ -572,7 +572,15 @@ namespace ts {
             }
             
             function emitTryStatement(node: TryStatement): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("try ");            
+                emit(node.tryBlock);
+                if (node.catchClause) {
+                    emit(node.catchClause);
+                }
+                if (node.finallyBlock) {
+                    write(" finally ");
+                    emit(node.finallyBlock);
+                }
             }
             
             function emitDebuggerStatement(node: DebuggerStatement): void {
@@ -762,7 +770,11 @@ namespace ts {
             }
             
             function emitCatchClause(node: CatchClause): void {
-                console.log("Need to handle node kind " + node.kind);
+                write(" catch { case ");
+                emit(node.variableDeclaration);
+                write(": Throwable => ")        
+                emit(node.block);
+                write("}");
             }
             
             function emitPropertyAssignment(node: PropertyAssignment): void {
