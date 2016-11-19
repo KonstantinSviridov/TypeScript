@@ -769,7 +769,14 @@ namespace ts {
             }
             
             function emitArrayLiteralExpression(node: ArrayLiteralExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                const elements = node.elements;
+                if (elements.length === 0) {
+                    write("Array()");
+                }
+                else {
+                    write("Array");
+                    emitExpressionList(elements, ListFormat.ArrayLiteralExpressionElements);
+                }
             }
             
             function emitObjectLiteralExpression(node: ObjectLiteralExpression): void {
@@ -790,7 +797,7 @@ namespace ts {
             
             function emitElementAccessExpression(node: ElementAccessExpression): void {
                 emitExpression(node.expression);
-                write("()");
+                write("(");
                 emitExpression(node.argumentExpression);
                 write(")");
             }
@@ -1405,7 +1412,7 @@ namespace ts {
         ObjectBindingPatternElements = SingleLine | AllowTrailingComma | SpaceBetweenBraces | CommaDelimited | SpaceBetweenSiblings,
         ArrayBindingPatternElements = SingleLine | AllowTrailingComma | CommaDelimited | SpaceBetweenSiblings,
         ObjectLiteralExpressionProperties = PreserveLines | CommaDelimited | SpaceBetweenSiblings | SpaceBetweenBraces | Indented | Braces,
-        ArrayLiteralExpressionElements = PreserveLines | CommaDelimited | SpaceBetweenSiblings | AllowTrailingComma | Indented | SquareBrackets,
+        ArrayLiteralExpressionElements = PreserveLines | CommaDelimited | SpaceBetweenSiblings | AllowTrailingComma | Indented | Parenthesis,
         CallExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis,
         NewExpressionArguments = CommaDelimited | SpaceBetweenSiblings | SingleLine | Parenthesis | OptionalIfUndefined,
         TemplateExpressionSpans = SingleLine | NoInterveningComments,
