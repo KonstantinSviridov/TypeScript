@@ -267,9 +267,8 @@ namespace ts {
             }
             
             function emitTypeQuery(node: TypeQueryNode): void {
-                write("typeof(");
                 emit(node.exprName);
-                write(")");
+                write(".type");
             }
             
             function emitTypeLiteral(node: TypeLiteralNode): void {
@@ -908,7 +907,9 @@ namespace ts {
             }
             
             function emitTypeOfExpression(node: TypeOfExpression): void {
-                console.log("Need to handle node kind " + node.kind);
+                write("typeof(");
+                emitExpression(node.expression);
+                write(")");
             }
             
             function emitVoidExpression(node: VoidExpression): void {
