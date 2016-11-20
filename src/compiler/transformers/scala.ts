@@ -1167,12 +1167,14 @@ namespace ts {
             }
 
             function emitConditionalExpression(node: ConditionalExpression): void {
+                write("(");
                 write("if (")
                 emitExpression(node.condition);
                 write(") ");
                 emitExpression(node.whenTrue);
                 write(" else ");
-                emitExpression(node.whenFalse);                
+                emitExpression(node.whenFalse);
+                write(")");                
             }
         
             function emitYieldExpression(node: YieldExpression): void {
