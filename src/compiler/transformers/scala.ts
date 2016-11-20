@@ -1,4 +1,4 @@
-253/// <reference path="../factory.ts" />
+/// <reference path="../factory.ts" />
 /// <reference path="../visitor.ts" />
 
 /*@internal*/
@@ -126,6 +126,8 @@ namespace ts {
                 const text = node.text
                 if (text in keywords) {
                   write("`" + text + "`");
+                } else if (text === "_") {
+                  write("_underscore_");
                 } else {
                   write(text);
                 }
@@ -220,7 +222,7 @@ namespace ts {
                     emit(node.body);
                 } else {
                     // make it parse in Scala, somehow
-                    write(" = {}");
+                    write(" = this()");
                 }
                 writeLine();
             }
