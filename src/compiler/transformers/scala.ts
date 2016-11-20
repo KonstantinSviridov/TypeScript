@@ -496,7 +496,7 @@ namespace ts {
                 writeLine();
                 write("while(")
                 emitExpressionWithPrefix(" ", node.condition);
-                write(") {")
+                write(") {");
                 writeLine();
                 emitEmbeddedStatement(node.statement);
                 writeLine();

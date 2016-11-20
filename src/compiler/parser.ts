@@ -10,16 +10,28 @@ namespace ts {
 
     export function createNode(kind: SyntaxKind, pos?: number, end?: number): Node {
         if (kind === SyntaxKind.SourceFile) {
-            return new (SourceFileConstructor || (SourceFileConstructor = objectAllocator.getSourceFileConstructor()))(kind, pos, end);
+            if(!SourceFileConstructor) {
+                SourceFileConstructor = objectAllocator.getSourceFileConstructor();
+            }
+            return new SourceFileConstructor(kind, pos, end);
         }
         else if (kind === SyntaxKind.Identifier) {
-            return new (IdentifierConstructor || (IdentifierConstructor = objectAllocator.getIdentifierConstructor()))(kind, pos, end);
+            if (!IdentifierConstructor) {
+                IdentifierConstructor = objectAllocator.getIdentifierConstructor();
+            }
+            return new IdentifierConstructor(kind, pos, end);
         }
         else if (kind < SyntaxKind.FirstNode) {
-            return new (TokenConstructor || (TokenConstructor = objectAllocator.getTokenConstructor()))(kind, pos, end);
+            if (!TokenConstructor) {
+                TokenConstructor = objectAllocator.getTokenConstructor();
+            }
+            return new TokenConstructor(kind, pos, end);
         }
         else {
-            return new (NodeConstructor || (NodeConstructor = objectAllocator.getNodeConstructor()))(kind, pos, end);
+            if (!NodeConstructor) {
+                NodeConstructor = objectAllocator.getNodeConstructor();
+            }
+            return new NodeConstructor(kind, pos, end);
         }
     }
 
