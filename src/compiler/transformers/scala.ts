@@ -1317,6 +1317,15 @@ namespace ts {
                         return getQuotedEscapedLiteralText("}", node.text, "\"\"\"");
                     case SyntaxKind.NumericLiteral:
                         return node.text;
+                    case SyntaxKind.RegularExpressionLiteral:
+                        const text = node.text.substring(1);
+                        const slashPos = text.lastIndexOf('/');
+                        const pattern = text.substring(0, slashPos);
+                        const flags = text.substring(slashPos + 1);
+                        if (flags === '')
+                            return 'java.util.regex.Pattern.compile(raw"""' + pattern + '""")';
+                        else
+                            return 'java.util.regex.Pattern.compile(raw"""' + pattern + '""", "' + flags + '")';
                 }
             }
 
