@@ -8,7 +8,8 @@ namespace ts {
     const keywords = {
         "type": 0,
         "match": 0,
-        "object": 0
+        "object": 0,
+        "val": 0
     };
 
     export function transformScala(context: TransformationContext) {
