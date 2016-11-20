@@ -70,6 +70,7 @@ namespace ts {
 
             function emitSourceFile(node: SourceFile): void {
                 console.log("Processing source file: " + node.fileName);
+
                 const statements = node.statements;
                 const statementOffset = emitPrologueDirectives(statements);
                 ///const savedTempFlags = tempFlags;
@@ -79,6 +80,7 @@ namespace ts {
                     emit(statements[i]);
                     writeLine();
                 }
+
                 //emitList(node, statements, ListFormat.MultiLine, statementOffset);
                 //tempFlags = savedTempFlags;
             }
@@ -397,10 +399,11 @@ namespace ts {
             }
 
             function emitModifiers(modifiers: NodeArray<Modifier>) {
-                if (modifiers && modifiers.length) {
-                    emitList(modifiers, ListFormat.Modifiers);
-                    write(" ");
-                }
+                let { } = modifiers; 
+                // if (modifiers && modifiers.length) {
+                //     emitList(modifiers, ListFormat.Modifiers);
+                //     write(" ");
+                // }
             }
             
             function emitEmptyStatement(): void {
@@ -656,7 +659,12 @@ namespace ts {
                 const varity = isLet(node) ? "var " : isConst(decls) ? "val " : "var "
                 let emitRhs: () => void;
                 for (const decl of decls.declarations) {
-                    emitRhs = () => emitExpressionWithPrefix(" = ", decl.initializer);
+                    emitRhs = () => {
+                        if (decl.initializer) 
+                            emitExpressionWithPrefix(" = ", decl.initializer);
+                        else
+                            write(" = zeroOfMyType");                       
+                    }
                     function ident(ident: Identifier): void {
                         emitModifiers(node.modifiers);
                         write(varity);
@@ -803,7 +811,7 @@ namespace ts {
             }
             
             function emitModuleDeclaration(node: ModuleDeclaration): void {
-                write("package ");
+                write("object ");
                 //console.log(node.name);
                 emit(node.name);
                 write(" {");
@@ -1125,7 +1133,14 @@ namespace ts {
             
             function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void {
                 emitExpression(node.operand);
-                emitTokenText(node.operator);
+                switch(node.operator) {
+                    case SyntaxKind.PlusPlusToken:
+                       write("+= 1");
+                       break;
+                    case SyntaxKind.MinusMinusToken:
+                       write("-= 1");
+                       break;
+                } 
             }
             
             function emitBinaryExpression(node: BinaryExpression): void { 
