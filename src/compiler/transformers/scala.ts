@@ -6,6 +6,7 @@ namespace ts {
     //const brackets = createBracketsMap();
 
     const keywords = {
+        "this": 0,
         "type": 0,
         "match": 0,
         "object": 0,
