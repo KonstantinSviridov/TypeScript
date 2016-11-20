@@ -454,6 +454,7 @@ namespace ts {
                         emitEmbeddedStatement(node.elseStatement);
                     }
                 }
+                writeLine();
            }
 
            function emitEmbeddedStatement(node: Statement) {
@@ -485,6 +486,7 @@ namespace ts {
                 emit(node.statement);
                 writeLine();
                 write("}");
+                writeLine();
             }
             
             function emitForStatement(node: ForStatement): void {
@@ -500,9 +502,10 @@ namespace ts {
                 writeLine();
                 emitExpressionWithPrefix(" ", node.incrementor);
                 writeLine();
-                write("}")
+                write("}");
                 writeLine();
-                write("}")
+                write("}");              
+                writeLine();
             }
 
             function emitForBinding(node: VariableDeclarationList | Expression) {
