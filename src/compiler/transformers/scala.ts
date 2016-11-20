@@ -531,6 +531,7 @@ namespace ts {
                 emitEmbeddedStatement(node.statement);
                 writeLine();
                 write("}");
+                writeLine();
             }
             
             function emitForOfStatement(node: ForOfStatement): void {
@@ -545,6 +546,7 @@ namespace ts {
                 emitEmbeddedStatement(node.statement);
                 writeLine();
                 write("}");
+                writeLine();
             }
             
             function emitContinueStatement(node: ContinueStatement): void {
@@ -554,6 +556,7 @@ namespace ts {
                 } else {
                     write("continue");
                 }
+                writeLine();
             }
             
             function emitBreakStatement(node: BreakStatement): void {
@@ -563,6 +566,7 @@ namespace ts {
                 } else {
                     write("break()");
                 }
+                writeLine();
             }
             
             function emitReturnStatement(node: ReturnStatement): void {
