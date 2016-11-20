@@ -673,6 +673,7 @@ namespace ts {
                     write(" finally ");
                     emit(node.finallyBlock);
                 }
+                writeLine();
             }
             
             function emitDebuggerStatement(): void {
@@ -1053,15 +1054,15 @@ namespace ts {
             }
             
             function emitArrowFunction(node: ArrowFunction): void {
-                write("(");                
                 emitFunctionLikeExpression(node);
-                write(")");
             }
 
-            function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {
+            function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {              
+                write("(");                
                 emitDecorators(node.decorators);
                 emitModifiers(node.modifiers);
-                emitSignatureAndBody(node, emitArrowFunctionHead);
+                emitSignatureAndBody(node, emitArrowFunctionHead);               
+                write(")");
             }
 
             function emitArrowFunctionHead(node: FunctionLikeDeclaration) {
