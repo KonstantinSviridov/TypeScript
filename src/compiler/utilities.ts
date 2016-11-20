@@ -2289,7 +2289,7 @@ namespace ts {
     const escapedCharsMap = createMap({
         "\0": "\\0",
         "\t": "\\t",
-        "\v": "\\v",
+        "\v": "\\u000b",
         "\f": "\\f",
         "\b": "\\b",
         "\r": "\\r",
