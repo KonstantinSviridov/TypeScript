@@ -337,6 +337,7 @@ namespace ts {
             function emitIntersectionType(node: IntersectionTypeNode): void {
                 write("(");
                 emitList(node.types, ListFormat.IntersectionTypeConstituents);
+                write(")");
             }
             
             function emitParenthesizedType(node: ParenthesizedTypeNode): void {
