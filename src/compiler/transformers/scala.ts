@@ -1139,26 +1139,31 @@ namespace ts {
             }
             
             function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void {
+                write("(");
                 emitTokenText(node.operator);
                 emitExpression(node.operand);
+                write(")");
             }
             
             function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void {
+                write("(");
                 emitExpression(node.operand);
                 switch(node.operator) {
                     case SyntaxKind.PlusPlusToken:
-                       write("+= 1");
+                       write("+= 1)")
                        break;
                     case SyntaxKind.MinusMinusToken:
-                       write("-= 1");
+                       write("-= 1)");
                        break;
                 } 
             }
             
-            function emitBinaryExpression(node: BinaryExpression): void { 
+            function emitBinaryExpression(node: BinaryExpression): void {
+                write("("); 
                 emitExpression(node.left);
                 emitTokenText(node.operatorToken.kind);
                 emitExpression(node.right);
+                write(")");
             }
 
             function emitConditionalExpression(node: ConditionalExpression): void {
