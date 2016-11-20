@@ -1327,7 +1327,14 @@ namespace ts {
                     case SyntaxKind.RegularExpressionLiteral:
                         const text = node.text.substring(1);
                         const slashPos = text.lastIndexOf('/');
-                        const pattern = text.substring(0, slashPos);
+                        const pattern0 = text.substring(0, slashPos);
+                        let pattern = "";
+                        for (let i = 0; i < pattern0.length; ++i) {
+                            if (pattern0[i] == '$')
+                                pattern += '$$';
+                            else
+                                pattern += pattern0[i];
+                        }
                         const flags = text.substring(slashPos + 1);
                         if (flags === '')
                             return 'java.util.regex.Pattern.compile(raw"""' + pattern + '""")';
