@@ -338,9 +338,14 @@ namespace ts {
             }
             
             function emitIntersectionType(node: IntersectionTypeNode): void {
-                write("(");
-                emitList(node.types, ListFormat.IntersectionTypeConstituents);
-                write(")");
+                // HACK for Path
+                if (node.types.length === 2 && node.types[0].kind === SyntaxKind.StringKeyword && node.types[1].kind === SyntaxKind.TypeLiteral) {
+                    write("String");
+                } else {
+                    write("(");
+                    emitList(node.types, ListFormat.IntersectionTypeConstituents);
+                    write(")");
+                }
             }
             
             function emitParenthesizedType(node: ParenthesizedTypeNode): void {
