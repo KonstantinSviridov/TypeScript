@@ -839,9 +839,16 @@ namespace ts {
         const typingOptions: TypingOptions = convertTypingOptionsFromJsonWorker(json["typingOptions"], basePath, errors, configFileName);
 
         if (json["extends"]) {
-            let [include, exclude, files, baseOptions]: [string[], string[], string[], CompilerOptions] = [undefined, undefined, undefined, {}];
+            let include: string[] = undefined
+            let exclude: string[] = undefined
+            let files: string[] = undefined
+            let baseOptions: CompilerOptions = {}
             if (typeof json["extends"] === "string") {
-                [include, exclude, files, baseOptions] = (tryExtendsName(json["extends"]) || [include, exclude, files, baseOptions]);
+                const arr = (tryExtendsName(json["extends"]) || [include, exclude, files, baseOptions]);
+                include = arr[0];
+                exclude = arr[1];
+                files = arr[2];
+                baseOptions = arr[3];
             }
             else {
                 errors.push(createCompilerDiagnostic(Diagnostics.Compiler_option_0_requires_a_value_of_type_1, "extends", "string"));
@@ -899,11 +906,14 @@ namespace ts {
             // Merge configs (copy the resolution stack so it is never reused between branches in potential diamond-problem scenarios)
             const result = parseJsonConfigFileContent(extendedResult.config, host, extendedDirname, /*existingOptions*/undefined, getBaseFileName(extendedConfigPath), resolutionStack.concat([resolvedPath]));
             errors.push(...result.errors);
-            const [include, exclude, files] = map(["include", "exclude", "files"], key => {
+            const triple = map(["include", "exclude", "files"], key => {
                 if (!json[key] && extendedResult.config[key]) {
                     return map(extendedResult.config[key], updatePath);
                 }
             });
+            const include = triple[0];
+            const exclude = triple[1];
+            const files = triple[2];
             return [include, exclude, files, result.options];
         }
 

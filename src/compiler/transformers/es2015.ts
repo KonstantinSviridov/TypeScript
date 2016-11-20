@@ -3061,7 +3061,9 @@ namespace ts {
         }
 
         function visitSourceFileNode(node: SourceFile): SourceFile {
-            const [prologue, remaining] = span(node.statements, isPrologueDirective);
+            const pair = span(node.statements, isPrologueDirective);
+            const prologue = pair[0];
+            const remaining = pair[1];
             const statements: Statement[] = [];
             startLexicalEnvironment();
             addRange(statements, prologue);

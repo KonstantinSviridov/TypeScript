@@ -410,7 +410,8 @@ namespace ts {
                     const name = decl.name;
                     switch (name.kind) {
                         case SyntaxKind.Identifier:                            
-                            ident(<Identifier> name)
+                            ident(<Identifier> name);
+                            break;
                         case SyntaxKind.ObjectBindingPattern:
                             const objpat = <ObjectBindingPattern> name;
                             if (objpat.elements) {
@@ -437,8 +438,10 @@ namespace ts {
                                     }
                                 }
                             }
+                            break;
                         case SyntaxKind.ArrayBindingPattern:
                             console.log("Warning: array patterns are not supported");
+                            break;
                     }
                 }
             }

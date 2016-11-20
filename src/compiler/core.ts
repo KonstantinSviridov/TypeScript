@@ -413,7 +413,9 @@ namespace ts {
         if (object) {
             result = {};
             for (const v of getOwnKeys(object)) {
-                const [key, value]: [string, U] = f(v, object[v]) || [undefined, undefined];
+                const keyvalue: [string, U] =  f(v, object[v]) || [undefined, undefined];
+                const key = keyvalue[0];
+                const value = keyvalue[1];
                 if (key !== undefined) {
                     result[key] = value;
                 }
