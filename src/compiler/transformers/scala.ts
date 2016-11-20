@@ -1035,7 +1035,9 @@ namespace ts {
             }
             
             function emitArrowFunction(node: ArrowFunction): void {
+                write("(");                
                 emitFunctionLikeExpression(node);
+                write(")");
             }
 
             function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {
