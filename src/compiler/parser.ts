@@ -7238,7 +7238,7 @@ namespace ts {
             let lastQueriedPosition = InvalidPosition.Value;
 
             return {
-                currentNode(position: number) {
+                currentNode: (position: number) => {
                     // Only compute the current node if the position is different than the last time
                     // we were asked.  The parser commonly asks for the node at the same position
                     // twice.  Once to know if can read an appropriate list element at a certain point,

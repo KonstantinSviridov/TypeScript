@@ -187,37 +187,37 @@ namespace ts {
                 args,
                 newLine: "\r\n",
                 useCaseSensitiveFileNames: false,
-                write(s: string): void {
+                write: (s: string): void => {
                     WScript.StdOut.Write(s);
                 },
                 readFile,
                 writeFile,
-                resolvePath(path: string): string {
+                resolvePath: (path: string): string => {
                     return fso.GetAbsolutePathName(path);
                 },
-                fileExists(path: string): boolean {
+                fileExists: (path: string): boolean => {
                     return fso.FileExists(path);
                 },
-                directoryExists(path: string) {
+                directoryExists: (path: string) => {
                     return fso.FolderExists(path);
                 },
-                createDirectory(directoryName: string) {
+                createDirectory: (directoryName: string) => {
                     if (!wscriptSystem.directoryExists(directoryName)) {
                         fso.CreateFolder(directoryName);
                     }
                 },
-                getExecutingFilePath() {
+                getExecutingFilePath: () => {
                     return WScript.ScriptFullName;
                 },
-                getCurrentDirectory() {
+                getCurrentDirectory: () => {
                     return shell.CurrentDirectory;
                 },
                 getDirectories,
-                getEnvironmentVariable(name: string) {
+                getEnvironmentVariable: (name: string) => {
                     return new ActiveXObject("WScript.Shell").ExpandEnvironmentStrings(`%${name}%`);
                 },
                 readDirectory,
-                exit(exitCode?: number): void {
+                exit: (exitCode?: number): void => {
                     try {
                         WScript.Quit(exitCode);
                     }
@@ -443,7 +443,7 @@ namespace ts {
                 args: process.argv.slice(2),
                 newLine: _os.EOL,
                 useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-                write(s: string): void {
+                write: (s: string): void => {
                     process.stdout.write(s);
                 },
                 readFile,
@@ -504,23 +504,23 @@ namespace ts {
                 },
                 fileExists,
                 directoryExists,
-                createDirectory(directoryName: string) {
+                createDirectory: (directoryName: string) => {
                     if (!nodeSystem.directoryExists(directoryName)) {
                         _fs.mkdirSync(directoryName);
                     }
                 },
-                getExecutingFilePath() {
+                getExecutingFilePath: () => {
                     return __filename;
                 },
-                getCurrentDirectory() {
+                getCurrentDirectory: () => {
                     return process.cwd();
                 },
                 getDirectories,
-                getEnvironmentVariable(name: string) {
+                getEnvironmentVariable: (name: string) => {
                     return process.env[name] || "";
                 },
                 readDirectory,
-                getModifiedTime(path) {
+                getModifiedTime: (path) => {
                     try {
                         return _fs.statSync(path).mtime;
                     }
@@ -528,18 +528,18 @@ namespace ts {
                         return undefined;
                     }
                 },
-                createHash(data) {
+                createHash: (data) => {
                     const hash = _crypto.createHash("md5");
                     hash.update(data);
                     return hash.digest("hex");
                 },
-                getMemoryUsage() {
+                getMemoryUsage: () => {
                     if (global.gc) {
                         global.gc();
                     }
                     return process.memoryUsage().heapUsed;
                 },
-                getFileSize(path) {
+                getFileSize: (path) => {
                     try {
                         const stat = _fs.statSync(path);
                         if (stat.isFile()) {
@@ -549,13 +549,13 @@ namespace ts {
                     catch (e) { }
                     return 0;
                 },
-                exit(exitCode?: number): void {
+                exit: (exitCode?: number): void => {
                     process.exit(exitCode);
                 },
-                realpath(path: string): string {
+                realpath: (path: string): string => {
                     return _fs.realpathSync(path);
                 },
-                tryEnableSourceMapsForHost() {
+                tryEnableSourceMapsForHost: () => {
                     try {
                         require("source-map-support").install();
                     }
@@ -576,11 +576,11 @@ namespace ts {
                 args: ChakraHost.args,
                 useCaseSensitiveFileNames: !!ChakraHost.useCaseSensitiveFileNames,
                 write: ChakraHost.echo,
-                readFile(path: string, _encoding?: string) {
+                readFile: (path: string, _encoding?: string) => {
                     // encoding is automatically handled by the implementation in ChakraHost
                     return ChakraHost.readFile(path);
                 },
-                writeFile(path: string, data: string, writeByteOrderMark?: boolean) {
+                writeFile: (path: string, data: string, writeByteOrderMark?: boolean) => {
                     // If a BOM is required, emit one
                     if (writeByteOrderMark) {
                         data = "\uFEFF" + data;
