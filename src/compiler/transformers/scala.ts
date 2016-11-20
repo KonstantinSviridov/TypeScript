@@ -5,6 +5,11 @@
 namespace ts {
     //const brackets = createBracketsMap();
 
+    const keywords = {
+        "type": 0,
+        "match": 0
+    };
+
     export function transformScala(context: TransformationContext) {
         return transformSourceFile;
 
@@ -114,8 +119,15 @@ namespace ts {
                 emitWithPrefix(": ", node.type);
             }
 
+
+
             function emitIdentifier(node: Identifier): void {
-                write(node.text);
+                const text = node.text
+                if (text in keywords) {
+                  write("`" + text + "`");
+                } else {
+                  write(text);
+                }
             }
 
             function emitQualifiedName(node: QualifiedName): void {
