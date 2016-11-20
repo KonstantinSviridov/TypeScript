@@ -35,7 +35,8 @@ namespace ts {
         forEachExpectedEmitFile(host, getDeclarationDiagnosticsFromFile, targetSourceFile);
         return declarationDiagnostics.getDiagnostics(targetSourceFile ? targetSourceFile.fileName : undefined);
 
-        function getDeclarationDiagnosticsFromFile({ declarationFilePath }: EmitFileNames, sources: SourceFile[], isBundledEmit: boolean) {
+        function getDeclarationDiagnosticsFromFile(obj: EmitFileNames, sources: SourceFile[], isBundledEmit: boolean) {
+            const { declarationFilePath } = obj;
             emitDeclarations(host, resolver, declarationDiagnostics, declarationFilePath, sources, isBundledEmit, /*emitOnlyDtsFiles*/ false);
         }
     }

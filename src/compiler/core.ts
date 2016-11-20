@@ -2058,7 +2058,8 @@ namespace ts {
     }
 
     /* @internal */
-    export function patternText({prefix, suffix}: Pattern): string {
+    export function patternText(tuple: Pattern): string {
+        const {prefix, suffix} = tuple;
         return `${prefix}*${suffix}`;
     }
 
@@ -2090,7 +2091,8 @@ namespace ts {
         return matchedValue;
     }
 
-    function isPatternMatch({prefix, suffix}: Pattern, candidate: string) {
+    function isPatternMatch(tuple: Pattern, candidate: string) {
+        const {prefix, suffix} = tuple;
         return candidate.length >= prefix.length + suffix.length &&
             startsWith(candidate, prefix) &&
             endsWith(candidate, suffix);

@@ -1427,7 +1427,9 @@ namespace ts {
          *
          * @param receiver The receiver for the member.
          */
-        function transformAccessorsToExpression(receiver: LeftHandSideExpression, { firstAccessor, getAccessor, setAccessor }: AllAccessorDeclarations, startsOnNewLine: boolean): Expression {
+        function transformAccessorsToExpression(receiver: LeftHandSideExpression, triple: AllAccessorDeclarations, startsOnNewLine: boolean): Expression {
+            const { firstAccessor, getAccessor, setAccessor } = triple;
+
             // To align with source maps in the old emitter, the receiver and property name
             // arguments are both mapped contiguously to the accessor name.
             const target = getMutableClone(receiver);

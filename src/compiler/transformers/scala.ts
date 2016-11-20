@@ -6,8 +6,6 @@ namespace ts {
     //const brackets = createBracketsMap();
 
     export function transformScala(context: TransformationContext) {
-        const { } = context;
-
         return transformSourceFile;
 
         function transformSourceFile(node: SourceFile) {
@@ -347,15 +345,15 @@ namespace ts {
                 write("`");
             }
             
-            function emitObjectBindingPattern({}: ObjectBindingPattern): void {
-                console.log("unreachable: emitObjectBindingPattern");
+            function emitObjectBindingPattern(node: ObjectBindingPattern): void {
+                console.log("unreachable: emitObjectBindingPattern in " + node.parent.kind);
             }
             
-            function emitArrayBindingPattern({}: ArrayBindingPattern): void {
+            function emitArrayBindingPattern(): void {
                 console.log("unreachable: emitArrayBindingPattern");
             }
             
-            function emitBindingElement({}: BindingElement): void {
+            function emitBindingElement(): void {
                 console.log("unreachable: emitBindingElement");
             }
             
@@ -394,56 +392,8 @@ namespace ts {
             }
 
             function emitVariableStatement(node: VariableStatement): void {
-                const decls = node.declarationList
-                const varity = isLet(node) ? "var " : isConst(node) ? "val " : "var ";
-                let emitRhs: () => void;
-                for (const decl of decls.declarations) {
-                    emitRhs = () => emitExpressionWithPrefix(" = ", decl.initializer);
-                    function ident(ident: Identifier): void {
-                        emitModifiers(node.modifiers);
-                        write(varity);
-                        emitIdentifier(ident);
-                        emitWithPrefix(": ", decl.type);
-                        emitRhs();
-                        writeLine();
-                    }
-                    const name = decl.name;
-                    switch (name.kind) {
-                        case SyntaxKind.Identifier:                            
-                            ident(<Identifier> name);
-                            break;
-                        case SyntaxKind.ObjectBindingPattern:
-                            const objpat = <ObjectBindingPattern> name;
-                            if (objpat.elements) {
-                                const x = fresh()
-                                write("const " + x);
-                                emitRhs();
-                                writeLine();
-
-                                for (const elem of objpat.elements) {                                    
-                                    switch (elem.name.kind) {
-                                        case SyntaxKind.Identifier:
-                                            const nested = <Identifier> elem.name;
-                                            emitRhs = () => {
-                                                write(" = ");
-                                                write(x + ".");
-                                                emitIdentifier(nested);
-                                                writeLine();
-                                            };
-                                            ident(nested);
-                                            break;
-                                        default:
-                                            console.log("Warning: nested object patterns are not supported")
-                                            break;
-                                    }
-                                }
-                            }
-                            break;
-                        case SyntaxKind.ArrayBindingPattern:
-                            console.log("Warning: array patterns are not supported");
-                            break;
-                    }
-                }
+                emitModifiers(node.modifiers);
+                emit(node.declarationList);        
             }
 
             function emitModifiers(modifiers: NodeArray<Modifier>) {
@@ -702,8 +652,56 @@ namespace ts {
                 emitExpressionWithPrefix(" = ", node.initializer);
             }
             
-            function emitVariableDeclarationList(node: VariableDeclarationList): void {
-                console.log("unreachable: emitVariableDeclarationList in " + node.parent.kind);
+            function emitVariableDeclarationList(decls: VariableDeclarationList): void {
+                const varity = isLet(node) ? "var " : isConst(decls) ? "val " : "var "
+                let emitRhs: () => void;
+                for (const decl of decls.declarations) {
+                    emitRhs = () => emitExpressionWithPrefix(" = ", decl.initializer);
+                    function ident(ident: Identifier): void {
+                        emitModifiers(node.modifiers);
+                        write(varity);
+                        emitIdentifier(ident);
+                        emitWithPrefix(": ", decl.type);
+                        emitRhs();
+                        writeLine();
+                    }
+                    const name = decl.name;
+                    switch (name.kind) {
+                        case SyntaxKind.Identifier:                            
+                            ident(<Identifier> name);
+                            break;
+                        case SyntaxKind.ObjectBindingPattern:
+                            const objpat = <ObjectBindingPattern> name;
+                            if (objpat.elements) {
+                                const x = fresh()
+                                write("const " + x);
+                                emitRhs();
+                                writeLine();
+
+                                for (const elem of objpat.elements) {                                    
+                                    switch (elem.name.kind) {
+                                        case SyntaxKind.Identifier:
+                                            const nested = <Identifier> elem.name;
+                                            emitRhs = () => {
+                                                write(" = ");
+                                                write(x + ".");
+                                                emitIdentifier(nested);
+                                                writeLine();
+                                            };
+                                            ident(nested);
+                                            break;
+                                        default:
+                                            console.log("Warning: nested object patterns are not supported")
+                                            break;
+                                    }
+                                }
+                            }
+                            break;
+                        case SyntaxKind.ArrayBindingPattern:
+                            console.log("Warning: array patterns are not supported");
+                            break;
+                    }
+                }
             }
             
             function emitFunctionDeclaration(node: FunctionDeclaration): void {
@@ -817,7 +815,6 @@ namespace ts {
             }
 
             function emitModuleBlock(node: ModuleBlock): void {
-                const { } = node;
                 for (const stat of node.statements)
                     emit(stat);
             }
@@ -1448,9 +1445,9 @@ namespace ts {
                     case SyntaxKind.ObjectBindingPattern:
                         return emitObjectBindingPattern(<ObjectBindingPattern>node);
                     case SyntaxKind.ArrayBindingPattern:
-                        return emitArrayBindingPattern(<ArrayBindingPattern>node);
+                        return emitArrayBindingPattern();
                     case SyntaxKind.BindingElement:
-                        return emitBindingElement(<BindingElement>node);
+                        return emitBindingElement();
 
                     // Misc
                     case SyntaxKind.TemplateSpan:
