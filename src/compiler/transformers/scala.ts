@@ -1,6 +1,6 @@
 /// <reference path="../factory.ts" />
 /// <reference path="../visitor.ts" />
-
+/// <reference path="../utilities.ts" />
 /*@internal*/
 namespace ts {
     //const brackets = createBracketsMap();
@@ -22,28 +22,35 @@ namespace ts {
         }
 
         function emitScala(node: SourceFile) {
-            const targetFileName = node.fileName + ".scala";
+            const dirs = setDirs(node.fileName);
             const emitterDiagnostics = createDiagnosticCollection();
             const host = context.getEmitHost();
             //const resolver = context.getEmitResolver();
-            const writer = createTextWriter(host.getNewLine());
-
+            const writer = createCompositeTextWriter(
+                "\n",dirs.context,dirs.rootPackage,dirs.targetDir);
+            writer.switchWriter(dirs.filePath,true);
             emitNode(writer, node);
-            
+
             // Write the output file
-            writeFile(host, emitterDiagnostics, targetFileName, writer.getText(), false);
+            let writers = writer.getWriters();
+            for(let k of Object.keys(writers)){
+                let w = writers[k];
+                writeFile(host, emitterDiagnostics, k, w.getTextWithImports(writer.getImports()), false);
+            }
         }
 
-        function emitNode(writer: EmitTextWriter, node: Node): void {
+        function emitNode(writer: CompositeEmitTextWriter, node: Node): void {
             const {
                 write,
-                writeLine
+                writeLine,
+                switchWriter,
+                getCurrentPath
             } = writer;
 
             let counter = 0;
-          
+
             emit(node);
-  
+
             function fresh() {
                counter += 1;
                return "fresh" + counter;
@@ -167,12 +174,12 @@ namespace ts {
                     emit(node.constraint);
                 }
             }
-            
+
             function emitDecorator(node: Decorator): void {
                 console.log("emitDecorator");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitPropertySignature(node: PropertySignature): void {
                 write("  var ");
                 emit(node.name);
@@ -183,7 +190,7 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitPropertyDeclaration(node: PropertyDeclaration): void {
                 write("  var ");
                 emit(node.name);
@@ -195,7 +202,7 @@ namespace ts {
                     write("_");
                 writeLine();
             }
-            
+
             function emitMethodSignature(node: MethodSignature): void {
                 write("  def ");
                 emit(node.name);
@@ -203,7 +210,7 @@ namespace ts {
                 emitTypeResult(node.type, /*canInfer*/ false);
                 writeLine();
             }
-            
+
             function emitMethodDeclaration(node: MethodDeclaration): void {
                 write("  def ");
                 emit(node.name);
@@ -215,7 +222,7 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitConstructor(node: ConstructorDeclaration): void {
                 write("  def this");
                 emitSignature(node);
@@ -228,26 +235,26 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitAccessorDeclaration(node: AccessorDeclaration): void {
                 console.log("emitAccessorDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitCallSignature(node: CallSignatureDeclaration): void {
                 write("  def apply");
                 emitSignature(node);
                 emitTypeResult(node.type, /*canInfer*/ false);
                 writeLine();
             }
-            
+
             function emitConstructSignature(node: ConstructSignatureDeclaration): void {
                 write("  def `new`");
                 emitSignature(node);
                 emitTypeResult(node.type, /*canInfer*/ false);
                 writeLine();
             }
-            
+
             function emitIndexSignature(node: IndexSignatureDeclaration): void {
                 write("  def apply");
                 emitSignature(node);
@@ -256,14 +263,25 @@ namespace ts {
                 write("  /* def update() -- if you need it */");
                 writeLine();
             }
-            
+
             function emitTypePredicate(node: TypePredicateNode): void {
                 const {} = node;
                 write("Boolean");
             }
 
             function emitTypeReference(node: TypeReferenceNode): void {
-                emit(node.typeName);
+                let tn = node.typeName;
+                let arr:string[] = [];
+                while(tn.kind == SyntaxKind.QualifiedName){
+                    arr.push(tn.right.text);
+                    tn = tn.left;
+                }
+                arr.push(tn.text);
+                arr = arr.reverse();
+                let typeName = arr[arr.length-1];
+                //let ns = arr.slice(0,arr.length-1).join(".");
+
+                write(typeName);
                 if (node.typeArguments && node.typeArguments.length !== 0) {
                     let first = true;
                     write("[");
@@ -277,7 +295,7 @@ namespace ts {
                     write("]");
                 }
             }
-            
+
             function emitFunctionOrConstructorTypeNode(node: FunctionOrConstructorTypeNode): void {
                 write("((");
                 if (node.parameters) {
@@ -302,24 +320,24 @@ namespace ts {
             function emitConstructorType(node: ConstructorTypeNode): void {
                 emitFunctionOrConstructorTypeNode(node);
             }
-            
+
             function emitTypeQuery(node: TypeQueryNode): void {
                 emit(node.exprName);
                 write(".type");
             }
-            
+
             function emitTypeLiteral(node: TypeLiteralNode): void {
                 write("{");
                 emitList(node.members, ListFormat.TypeLiteralMembers);
                 write("}");
             }
-            
+
             function emitArrayType(node: ArrayTypeNode): void {
                 write("Array[");
                 emit(node.elementType);
                 write("]");
             }
-            
+
             function emitTupleType(node: TupleTypeNode): void {
                 write("(");
                 let first = true;
@@ -332,13 +350,13 @@ namespace ts {
                 }
                 write(")");
             }
-            
+
             function emitUnionType(node: UnionTypeNode): void {
                 write("(");
                 emitList(node.types, ListFormat.UnionTypeConstituents);
                 write(")");
             }
-            
+
             function emitIntersectionType(node: IntersectionTypeNode): void {
                 // HACK for Path
                 if (node.types.length === 2 && node.types[0].kind === SyntaxKind.StringKeyword && node.types[1].kind === SyntaxKind.TypeLiteral) {
@@ -349,50 +367,56 @@ namespace ts {
                     write(")");
                 }
             }
-            
+
             function emitParenthesizedType(node: ParenthesizedTypeNode): void {
                 emit(node.type);
             }
-            
+
             function emitExpressionWithTypeArguments(node: ExpressionWithTypeArguments): void {
-                emit(node.expression);
+                let ref = toRef(node);
+                if(ref){
+                    write(`${ref.indexName}.${ref.name}`);
+                }
+                else {
+                    emitExpression(node.expression);
+                }
                 emitTypeArguments(node.typeArguments);
             }
-            
+
             function emitThisType(): void {
                 console.log("emitThisType");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitLiteralType(node: LiteralTypeNode): void {
                 write("`");
                 emit(node.literal);
                 write("`");
             }
-            
+
             function emitObjectBindingPattern(node: ObjectBindingPattern): void {
                 console.log("unreachable: emitObjectBindingPattern in " + node.parent.kind);
             }
-            
+
             function emitArrayBindingPattern(): void {
                 console.log("unreachable: emitArrayBindingPattern");
             }
-            
+
             function emitBindingElement(): void {
                 console.log("unreachable: emitBindingElement");
             }
-            
+
             function emitTemplateSpan(node: TemplateSpan): void {
                 emitExpression(node.expression);
                 emit(node.literal);
             }
-            
+
             function emitSemicolonClassElement(): void {
                 console.log("emitSemicolonClassElement");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
-            function emitBlock(node: Block): void {   
+
+            function emitBlock(node: Block): void {
                 if (isSingleLineEmptyBlock(node)) {
                     emitTokenText(SyntaxKind.OpenBraceToken);
                     write(" ");
@@ -418,21 +442,21 @@ namespace ts {
 
             function emitVariableStatement(node: VariableStatement): void {
                 emitModifiers(node.modifiers);
-                emit(node.declarationList);        
+                emit(node.declarationList);
             }
 
             function emitModifiers(modifiers: NodeArray<Modifier>) {
-                let { } = modifiers; 
+                let { } = modifiers;
                 // if (modifiers && modifiers.length) {
                 //     emitList(modifiers, ListFormat.Modifiers);
                 //     write(" ");
                 // }
             }
-            
+
             function emitEmptyStatement(): void {
                 write(";");
             }
-            
+
             function emitExpressionStatement(node: ExpressionStatement): void {
                 emitExpression(node.expression);
                 writeLine();
@@ -469,7 +493,7 @@ namespace ts {
                     emit(node);
                 }
             }
-            
+
             function emitDoStatement(node: DoStatement): void {
                 write("do {");
                 writeLine();
@@ -479,7 +503,7 @@ namespace ts {
                 emit(node.expression);
                 write(")");
             }
-            
+
             function emitWhileStatement(node: WhileStatement): void {
                 write("while (");
                 emit(node.expression);
@@ -490,7 +514,7 @@ namespace ts {
                 write("}");
                 writeLine();
             }
-            
+
             function emitForStatement(node: ForStatement): void {
                 write("{");
                 writeLine();
@@ -506,7 +530,7 @@ namespace ts {
                 writeLine();
                 write("}");
                 writeLine();
-                write("}");              
+                write("}");
                 writeLine();
             }
 
@@ -520,13 +544,13 @@ namespace ts {
                     }
                 }
             }
-            
+
             function emitForInStatement(node: ForInStatement): void {
                 write("(");
                 emitExpression(node.expression);
                 const x = fresh();
-                write(").keys.foreach { " + x + " => ");      
-                writeLine();      
+                write(").keys.foreach { " + x + " => ");
+                writeLine();
                 emitForBinding(node.initializer);
                 write(" = " + x)
                 writeLine();
@@ -535,13 +559,13 @@ namespace ts {
                 write("}");
                 writeLine();
             }
-            
+
             function emitForOfStatement(node: ForOfStatement): void {
                 write("(");
                 emitExpression(node.expression);
                 const x = fresh();
-                write(").foreach { " + x + " => ");      
-                writeLine();      
+                write(").foreach { " + x + " => ");
+                writeLine();
                 emitForBinding(node.initializer);
                 write(" = " + x)
                 writeLine();
@@ -550,7 +574,7 @@ namespace ts {
                 write("}");
                 writeLine();
             }
-            
+
             function emitContinueStatement(node: ContinueStatement): void {
                 if (node.label) {
                     write("continue ");
@@ -560,7 +584,7 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitBreakStatement(node: BreakStatement): void {
                 if (node.label) {
                     emit(node.label);
@@ -570,18 +594,18 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitReturnStatement(node: ReturnStatement): void {
                 emitTokenText(SyntaxKind.ReturnKeyword);
                 emitExpressionWithPrefix(" ", node.expression);
                 writeLine();
             }
-            
+
             function emitWithStatement(node: WithStatement): void {
                 console.log("emitWhileStatement");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitSwitchStatement(node: SwitchStatement): void {
                 emit(node.expression);
                 write(" match {");
@@ -644,7 +668,7 @@ namespace ts {
                     }
                 }
             }
-            
+
             function emitLabeledStatement(node: LabeledStatement): void {
                 write("val ");
                 emit(node.label);
@@ -657,14 +681,14 @@ namespace ts {
                 writeLine();
                 write("}");
             }
-            
+
             function emitThrowStatement(node: ThrowStatement): void {
                 write("throw");
                 emitExpressionWithPrefix(" ", node.expression);
             }
-            
+
             function emitTryStatement(node: TryStatement): void {
-                write("try ");            
+                write("try ");
                 emit(node.tryBlock);
                 if (node.catchClause) {
                     emit(node.catchClause);
@@ -675,26 +699,26 @@ namespace ts {
                 }
                 writeLine();
             }
-            
+
             function emitDebuggerStatement(): void {
                 write(";");
             }
-            
+
             function emitVariableDeclaration(node: VariableDeclaration): void {
                 emit(node.name);
                 emitWithPrefix(": ", node.type);
                 emitExpressionWithPrefix(" = ", node.initializer);
             }
-            
+
             function emitVariableDeclarationList(decls: VariableDeclarationList): void {
                 const varity = isLet(node) ? "var " : isConst(decls) ? "val " : "var "
                 let emitRhs: () => void;
                 for (const decl of decls.declarations) {
                     emitRhs = () => {
-                        if (decl.initializer) 
+                        if (decl.initializer)
                             emitExpressionWithPrefix(" = ", decl.initializer);
                         else
-                            write(" = zeroOfMyType");                       
+                            write(" = zeroOfMyType");
                     }
                     function ident(ident: Identifier): void {
                         emitModifiers(node.modifiers);
@@ -706,7 +730,7 @@ namespace ts {
                     }
                     const name = decl.name;
                     switch (name.kind) {
-                        case SyntaxKind.Identifier:                            
+                        case SyntaxKind.Identifier:
                             ident(<Identifier> name);
                             break;
                         case SyntaxKind.ObjectBindingPattern:
@@ -717,7 +741,7 @@ namespace ts {
                                 emitRhs();
                                 writeLine();
 
-                                for (const elem of objpat.elements) {                                    
+                                for (const elem of objpat.elements) {
                                     switch (elem.name.kind) {
                                         case SyntaxKind.Identifier:
                                             const nested = <Identifier> elem.name;
@@ -742,7 +766,7 @@ namespace ts {
                     }
                 }
             }
-            
+
             function emitFunctionDeclaration(node: FunctionDeclaration): void {
                 write("def ");
                 emit(node.name);
@@ -788,7 +812,16 @@ namespace ts {
                 }
             }
 
+            function preEmitClassOrInterface(node:ClassDeclaration|InterfaceDeclaration){
+                let className = node.name.text;
+                let _pathForCalss = pathForClass(className);
+                registerClass(className,writer);
+                switchWriter(_pathForCalss,false);
+            }
+
             function emitClassDeclaration(node: ClassDeclaration): void {
+                let _currentPath = getCurrentPath();
+                preEmitClassOrInterface(node);
                 write("class ");
                 emit(node.name);
                 emitTypeParameters(node.typeParameters);
@@ -801,9 +834,12 @@ namespace ts {
                 }
                 write("}");
                 writeLine();
+                switchWriter(_currentPath,null);
             }
 
             function emitInterfaceDeclaration(node: InterfaceDeclaration): void {
+                let _currentPath = getCurrentPath();
+                preEmitClassOrInterface(node);
                 write("trait ");
                 emit(node.name);
                 emitTypeParameters(node.typeParameters);
@@ -816,6 +852,7 @@ namespace ts {
                 }
                 write("}");
                 writeLine();
+                switchWriter(_currentPath,null);
             }
 
             function emitTypeAliasDeclaration(node: TypeAliasDeclaration): void {
@@ -826,7 +863,7 @@ namespace ts {
                 emit(node.type);
                 writeLine();
             }
-            
+
             function emitEnumDeclaration(node: EnumDeclaration): void {
                 write("sealed abstract class ");
                 emit(node.name);
@@ -840,7 +877,7 @@ namespace ts {
                 write("}");
                 writeLine();
             }
-            
+
             function emitModuleDeclaration(node: ModuleDeclaration): void {
                 write("object ");
                 //console.log(node.name);
@@ -859,55 +896,90 @@ namespace ts {
             }
 
             function emitImportEqualsDeclaration(node: ImportEqualsDeclaration): void {
-                console.log("emitImportEqualsDeclaration");
-                console.log("Need to handle node kind " + node.kind);
+                let name = node.name.text;
+                if(node.moduleReference){
+                    let mr = node.moduleReference;
+                    if(mr.kind == SyntaxKind.ExternalModuleReference){
+                        let ref = (<any>(<ExternalModuleReference>mr).expression).text;
+                        console.log(`Import external: ${name} => ${ref}`);
+                        processModuleImport(name,ref,writer);
+
+                    }
+                    else {
+                        let arr:string[] = [];
+                        while(mr.kind == SyntaxKind.QualifiedName){
+                            arr.push(mr.right.text);
+                            mr = mr.left;
+                        }
+                        arr.push(mr.text);
+                        console.log(`Import identifier: ${name} => ${arr.reverse().join(".")}`);
+                    }
+                }
             }
-            
+
             function emitImportDeclaration(node: ImportDeclaration): void {
-                console.log("emitImportDeclaration");
-                console.log("Need to handle node kind " + node.kind);
+                let ic = node.importClause;
+                let names:string[] = [];
+                if(ic.name){
+                    names.push(ic.name.text);
+                }
+                else if(ic.namedBindings){
+                    if(ic.namedBindings.kind == SyntaxKind.NamespaceImport){
+                        names.push(ic.namedBindings.name.text);
+                    }
+                    else if(ic.namedBindings.kind == SyntaxKind.NamedImports){
+                        for(let is of ic.namedBindings.elements){
+                            names.push(is.name.text);
+                        }
+                    }
+                }
+                let ref = (<any>node.moduleSpecifier).text;
+                for(let n of names) {
+                    processClassImport(n, ref, writer);
+                    console.log(`Import class: ${n} => ${ref}`);
+                }
             }
-            
+
             function emitImportClause(node: ImportClause): void {
                 console.log("emitImportClause");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitNamespaceImport(node: NamespaceImport): void {
                 console.log("emitNamespaceImport");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitNamedImports(node: NamedImports): void {
                 console.log("emitNamedImports");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitImportSpecifier(node: ImportSpecifier): void {
                 console.log("emitImportSpecifier");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitExportAssignment(node: ExportAssignment): void {
                 console.log("emitExportAssignment");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitExportDeclaration(node: ExportDeclaration): void {
                 console.log("emitExportDeclaration");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitNamedExports(node: NamedExports): void {
                 console.log("emitNamedExports");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitExportSpecifier(node: ExportSpecifier): void {
                 console.log("emitExportSpecifier");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitHeritageClauses(nodes: NodeArray<HeritageClause>): void {
                 if (nodes) {
                     //let first = true;
@@ -922,7 +994,7 @@ namespace ts {
                     }
                 }
             }
-            
+
             function emitHeritageClause(node: HeritageClause): void {
                 if (node.types) {
                     let first = true;
@@ -937,15 +1009,15 @@ namespace ts {
                     }
                 }
             }
-            
+
             function emitCatchClause(node: CatchClause): void {
                 write(" catch { case ");
                 emit(node.variableDeclaration);
-                write(": Throwable => ")        
+                write(": Throwable => ")
                 emit(node.block);
                 write("}");
             }
-            
+
             function emitPropertyAssignment(node: PropertyAssignment): void {
                 if (node.initializer) {
                     if (node.name.kind === SyntaxKind.Identifier)
@@ -956,24 +1028,24 @@ namespace ts {
                     emit(node.initializer);
                 }
             }
-            
+
             function emitShorthandPropertyAssignment(node: ShorthandPropertyAssignment): void {
                 write('"' + node.name.text + '" -> ');
                 emit(node.name);
             }
-            
+
             function emitEnumMember(node: EnumMember): void {
                 write("  case object ");
                 emit(node.name);
                 write(" extends ");
                 emit((<EnumDeclaration>node.parent).name);
             }
-            
+
             function emitExternalModuleReference(node: ExternalModuleReference): void {
                 console.log("emitExternalModuleReference");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitArrayLiteralExpression(node: ArrayLiteralExpression): void {
                 const elements = node.elements;
                 if (elements.length === 0) {
@@ -984,26 +1056,47 @@ namespace ts {
                     emitExpressionList(elements, ListFormat.ArrayLiteralExpressionElements);
                 }
             }
-            
+
             function emitObjectLiteralExpression(node: ObjectLiteralExpression): void {
                 const properties = node.properties;
                 write("Map");
                 emitList(properties, ListFormat.ObjectLiteralExpressionProperties);
             }
-            
+
             function emitPropertyAccessExpression(node: PropertyAccessExpression): void {
                 emitExpression(node.expression);
                 write(".");
                 emit(node.name);
             }
-            
+
             function emitElementAccessExpression(node: ElementAccessExpression): void {
                 emitExpression(node.expression);
                 write("(");
                 emitExpression(node.argumentExpression);
                 write(")");
             }
-            
+
+            function toRef(node:any):{
+                name: string,
+                namespace: string,
+                indexName: string
+            }{
+                let expr:any = node.expression;
+                if(expr.name && expr.expression.text){
+                    let ns = expr.expression.text;
+                    if(writer.hasImport(ns)){
+                        let name = expr.name.text;
+                        let indexName = writer.indexFileName(ns);
+                        return{
+                            namespace: ns,
+                            name: name,
+                            indexName: indexName
+                        }
+                    }
+                }
+
+            }
+
             function emitCallExpression(node: CallExpression): void {
                 emitExpression(node.expression);
                 emitTypeArguments(node.typeArguments);
@@ -1017,10 +1110,16 @@ namespace ts {
             function emitTypeArguments(typeArguments: NodeArray<TypeNode>) {
                 emitList(typeArguments, ListFormat.TypeArguments);
             }
-            
+
             function emitNewExpression(node: NewExpression): void {
                 write("new ");
-                emitExpression(node.expression);
+                let ref = toRef(node);
+                if(ref){
+                    write(ref.name);
+                }
+                else {
+                    emitExpression(node.expression);
+                }
                 emitTypeArguments(node.typeArguments);
                 emitExpressionList(node.arguments, ListFormat.NewExpressionArguments);
             }
@@ -1030,38 +1129,38 @@ namespace ts {
                 emit(node.head);
                 emitList(node.templateSpans, ListFormat.TemplateExpressionSpans);
             }
-            
+
             function emitTaggedTemplateExpression(node: TaggedTemplateExpression): void {
                 console.log("emitTaggedTemplateExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitTypeAssertionExpression(node: TypeAssertion): void {
                 emitExpression(node.expression);
                 write(".asInstanceOf[");
                 emit(node.type);
-                write("]");                
+                write("]");
             }
-            
+
             function emitParenthesizedExpression(node: ParenthesizedExpression): void {
                 write("(");
                 emitExpression(node.expression);
                 write(")");
             }
-            
+
             function emitFunctionExpression(node: FunctionExpression): void {
                 emitFunctionLikeExpression(node);
             }
-            
+
             function emitArrowFunction(node: ArrowFunction): void {
                 emitFunctionLikeExpression(node);
             }
 
-            function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {              
-                write("(");                
+            function emitFunctionLikeExpression(node: FunctionLikeDeclaration): void {
+                write("(");
                 emitDecorators(node.decorators);
                 emitModifiers(node.modifiers);
-                emitSignatureAndBody(node, emitArrowFunctionHead);               
+                emitSignatureAndBody(node, emitArrowFunctionHead);
                 write(")");
             }
 
@@ -1081,11 +1180,11 @@ namespace ts {
                     emitParameters(parameters);
                 }
             }
-            
+
             function emitParameters(parameters: NodeArray<ParameterDeclaration>) {
                 emitList(parameters, ListFormat.Parameters);
             }
-            
+
             function emitSignatureAndBody(node: FunctionLikeDeclaration, emitSignatureHead: (node: SignatureDeclaration) => void) {
                 const body = node.body;
                 if (body) {
@@ -1118,7 +1217,7 @@ namespace ts {
                 writeLine();
                 write("}")
             }
-            
+
             function emitDeleteExpression(node: DeleteExpression): void {
                 const expr = node.expression;
                 switch (expr.kind) {
@@ -1142,30 +1241,30 @@ namespace ts {
                         console.log("Need to handle emitDeleteExpression() with " + expr.kind);
                 }
             }
-            
+
             function emitTypeOfExpression(node: TypeOfExpression): void {
                 write("typeof(");
                 emitExpression(node.expression);
                 write(")");
             }
-            
+
             function emitVoidExpression(node: VoidExpression): void {
                 console.log("emitVoidExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitAwaitExpression(node: AwaitExpression): void {
                 console.log("emitAwaitExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitPrefixUnaryExpression(node: PrefixUnaryExpression): void {
                 write("(");
                 emitTokenText(node.operator);
                 emitExpression(node.operand);
                 write(")");
             }
-            
+
             function emitPostfixUnaryExpression(node: PostfixUnaryExpression): void {
                 write("(");
                 emitExpression(node.operand);
@@ -1176,11 +1275,11 @@ namespace ts {
                     case SyntaxKind.MinusMinusToken:
                        write("-= 1)");
                        break;
-                } 
+                }
             }
-            
+
             function emitBinaryExpression(node: BinaryExpression): void {
-                write("("); 
+                write("(");
                 emitExpression(node.left);
                 emitTokenText(node.operatorToken.kind);
                 emitExpression(node.right);
@@ -1195,24 +1294,24 @@ namespace ts {
                 emitExpression(node.whenTrue);
                 write(" else ");
                 emitExpression(node.whenFalse);
-                write(")");                
+                write(")");
             }
-        
+
             function emitYieldExpression(node: YieldExpression): void {
                 console.log("emitYieldExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitSpreadElementExpression(node: SpreadElementExpression): void {
                 emitExpression(node.expression);
                 write(": _*");
             }
-            
+
             function emitClassExpression(node: ClassExpression): void {
                 console.log("emitClassExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitAsExpression(node: AsExpression): void {
                 emitExpression(node.expression);
                 if (node.type) {
@@ -1221,12 +1320,12 @@ namespace ts {
                     write("]");
                 }
             }
-            
+
             function emitNonNullExpression(node: NonNullExpression): void {
                 console.log("emitNonNullExpression");
                 console.log("Need to handle node kind " + node.kind);
             }
-            
+
             function emitList(children: NodeArray<Node>, format: ListFormat, start?: number, count?: number) {
                 emitNodeList(emit, children, format, start, count);
             }
@@ -1299,11 +1398,11 @@ namespace ts {
                     write(getClosingBracket(format));
                 }
             }
-            
+
             function emitWithPrefix(prefix: string, node: Node) {
                 emitNodeWithPrefix(prefix, node, emit);
             }
-            
+
             function emitExpressionWithPrefix(prefix: string, node: Node) {
                 emitNodeWithPrefix(prefix, node, emitExpression);
             }
@@ -1367,7 +1466,7 @@ namespace ts {
             function emitLiteral(node: LiteralLikeNode) {
                 write(getLiteralTextOfNode(node));
             }
-            
+
             function emitNumericLiteral(node: NumericLiteral): void {
                 emitLiteral(node);
             }
@@ -1811,7 +1910,7 @@ namespace ts {
     }
 
     const brackets = createBracketsMap();
-    
+
     function getOpeningBracket(format: ListFormat) {
         return brackets[format & ListFormat.BracketsMask][0];
     }
@@ -1825,4 +1924,300 @@ namespace ts {
     function getDelimiter(format: ListFormat) {
         return delimeters[format & ListFormat.DelimitersMask];
     }
+
+    interface AdvancedEmitTextWriter extends EmitTextWriter {
+        registerTypeReference(namespace:string,name:string):void;
+        getTextWithImports(globalImports:{[key:string]:Imports}): string;
+    }
+
+    interface CompositeEmitTextWriter {
+        write(s: string): void;
+        writeLine(): void;
+        switchWriter(p:string,isIndex:boolean):void;
+        getWriters():{[key:string]:AdvancedEmitTextWriter};
+        getCurrentPath():string;
+        getImports():{[key:string]:Imports};
+        registerImport(i:Imports):void;
+        registerTypeReference(namespace:string,name:string):void;
+        contextDir():string;
+        rootPackage():string;
+        targetDir():string;
+        hasImport(ns:string):boolean;
+        indexFileName(ns:string):string;
+    }
+
+
+    interface Imports {
+        tsNamespace: string,
+        path: string,
+        classNames: string[],
+        scalaPackage: string
+    }
+
+    function createCompositeTextWriter(newLine: String,context:string,_rootPackage:string,_targetDir:string): CompositeEmitTextWriter {
+
+        let writers:{[key:string]:AdvancedEmitTextWriter} = {};
+
+        let currentWriter:AdvancedEmitTextWriter;
+        let currentPath:string;
+
+        let imports:{[key:string]:Imports} = {};
+        let importsByNs:{[key:string]:Imports} = {};
+
+        function getPackage(p:string):string{
+            let ind = p.lastIndexOf("/");
+            if(p.length>_targetDir.length && ind>=0){
+                p = p.substring(0,ind);
+            }
+            p = p.substring(_targetDir.length);
+            return `${_rootPackage}${p.replace(/\//g,".")}`
+        }
+
+        function switchWriter(p:string,isIndex:boolean){
+            let w = writers[p];
+            if(!w){
+                let className:string = null;
+                if(isIndex){
+                    let ind = p.lastIndexOf("/");
+                    className = p.substring(ind+1).replace(/\.scala$/,"");
+                }
+                let pkg = getPackage(p);
+                w = createAdvancedTextWriter(newLine,pkg,className);
+                writers[p] = w;
+                w.reset();
+            }
+            currentWriter = w;
+            currentPath = p;
+        }
+
+        function write(s: string) {
+            currentWriter.write(s);
+        }
+
+        function writeLine() {
+            currentWriter.writeLine();
+        }
+
+        function registerTypeReference(namespace:string,name:string){
+            currentWriter.registerTypeReference(namespace,name);
+        }
+
+        function hasImport(ns:string):boolean{
+            return importsByNs[ns]!=null;
+        }
+
+        function indexFileName(ns:string):string{
+            let im = importsByNs[ns];
+            if(!im){
+                return null;
+            }
+            let p = im.path;
+            p = p.substring(p.lastIndexOf("/")+1);
+            let name = p.replace(/\.scala$/,"");
+            return name;
+        }
+
+        function registerImport(i:Imports){
+            let existing = imports[`${i.path}_${i.tsNamespace}`];
+            if(!existing) {
+                imports[i.path] = i;
+                importsByNs[i.tsNamespace] = i;
+                return;
+            }
+            for(let c of i.classNames.filter(x=>existing.classNames.indexOf(x)<0)){
+                existing.classNames.push(c);
+            }
+        }
+
+        return {
+            write,
+            writeLine,
+            switchWriter,
+            registerImport,
+            registerTypeReference,
+            hasImport,
+            indexFileName,
+            getImports: () => imports,
+            getWriters: () => writers,
+            getCurrentPath: () => currentPath,
+            contextDir: () => context,
+            rootPackage: () => _rootPackage,
+            targetDir: () => _targetDir
+        };
+    }
+
+    function createAdvancedTextWriter(newLine:String,classPackage:string,className:string):AdvancedEmitTextWriter{
+        let tw = createTextWriter(newLine);
+        let imports:{[key:string]:Imports} = {};
+        (<any>tw).imports = imports;
+        (<any>tw).registerTypeReference = (namespace:string,name:string)=>{
+            let existing = imports[namespace];
+            if(!existing){
+                imports[namespace] = {
+                    tsNamespace: namespace,
+                    path: null,
+                    classNames: [name],
+                    scalaPackage: null
+                };
+                return;
+            }
+            else if(existing.classNames.indexOf(name)<0) {
+                existing.classNames.push(name);
+            }
+        };
+        (<any>tw).getTextWithImports = (globalImports:{[key:string]:Imports}) => {
+            let importsString = computeImports(globalImports,imports);
+            let ownText = tw.getText();
+            if(className){
+                ownText = `class ${className}{\n\n${ownText}\n\n}`;
+            }
+            let result = importsString + "\n" + ownText;
+            result = result.trim() + "\n";
+            result = `package ${classPackage}\n\n${result}`;
+            return result;
+        };
+        return <AdvancedEmitTextWriter>tw;
+    }
+
+    function computeImports(globalImports:{[key:string]:Imports},localImports:{[key:string]:Imports}): string{
+        let localImportsArray = Object.keys(localImports).map(x=>localImports[x]);
+        let globalImportsArray = Object.keys(globalImports).map(x=>globalImports[x]);
+        let globalClassMap:{[key:string]:Imports} = {};
+        let globalNamespaceMap:{[key:string]:Imports} = {};
+        for(let gi of globalImportsArray){
+            if(gi.tsNamespace){
+                globalNamespaceMap[gi.tsNamespace] = gi;
+            }
+            else{
+                for(let cn of  gi.classNames){
+                    globalClassMap[cn] = gi;
+                }
+            }
+        }
+        let result = "";
+        for(let li of globalImportsArray.concat(localImportsArray)){
+        //for(let li of localImportsArray){
+            if(li.tsNamespace){
+                let gi = globalNamespaceMap[li.tsNamespace];
+                if(gi) {
+                    for (let cn of li.classNames) {
+                        if(cn=="__$INDEX__"){
+                            cn = indexFileName(gi.path);
+                        }
+                        result += `import ${gi.scalaPackage}.${cn}\n`
+                    }
+                }
+                else{
+                    console.warn("Unresolved namespace: " + li.tsNamespace);
+                }
+            }
+            else{
+                for (let cn of li.classNames) {
+                    let gi = globalClassMap[cn];
+                    if(gi) {
+                        result += `import ${gi.scalaPackage}.${cn};\n`
+                    }
+                    else{
+                        console.warn("Unresolved class name: " + cn);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    function processModuleImport(ns:string,rel:string,w:CompositeEmitTextWriter){
+        rel = rel.replace(/^\.\//,"");
+        let cName = indexFileName(rel).replace(/\.scala$/,"");
+        processClassImport(cName,rel,w,ns);
+    }
+
+    function processClassImport(cName:string,rel:string,w:CompositeEmitTextWriter,ns=""){
+        rel = rel.replace(/^\.\//,"");
+        let p = `${w.contextDir()}/${rel.replace(/-/g,"_")}`;
+        p = p + "/" + cName + ".scala";
+        let ind = p.lastIndexOf("/");
+        let pSegm = p.substring(w.targetDir().length,ind);
+        if(pSegm.charAt(0)=="/"){
+            pSegm = pSegm.substring(1);
+        }
+        let pkg = `${w.rootPackage()}.${pSegm.replace(/\//g,".")}`
+        let result:Imports = {
+            tsNamespace: ns,
+            path: p,
+            classNames: [ cName ],
+            scalaPackage: pkg
+        };
+        w.registerImport(result);
+    }
+
+    function registerClass(className:string,w:CompositeEmitTextWriter){
+        let cp = w.getCurrentPath();
+        let ind = cp.lastIndexOf("/");
+        if(ind>=0){
+            cp = cp.substring(0,ind);
+        }
+        let p = `${cp}/${className}.scala`;
+        let pkg = `${w.rootPackage()}${cp.substring(w.targetDir().length).replace(/\//g,".")}`;
+        let result:Imports = {
+            tsNamespace: "",
+            path: p,
+            classNames: [ className ],
+            scalaPackage: pkg
+        };
+        w.registerImport(result);
+    }
 }
+
+var dir="";
+
+
+
+function setDirs(p:string){
+
+    p = p.replace(/\\/g,"/").replace(/.ts$/,"");
+    let targetDir = "C:\\GIT-repos\\AMF\\typesystem\\src\\org\\mulesoft\\typesystem".replace(/\\/g,"/");
+    let rootPackage = "org.mulesoft.typesystem";
+    let rootDir = process.cwd().replace(/\\/g,"/");
+    let name:string;
+    if(p.substring(0,rootDir.length)==rootDir){
+        p = p.substring(rootDir.length);
+        if(p.startsWith("/")){
+            p = p.substring(1);
+        }
+        if(p.startsWith("src/")){
+            p = p.substring("src/".length);
+        }
+        if(targetDir.endsWith("/")){
+            targetDir = targetDir.substring(0,targetDir.length-1);
+        }
+        name = name =indexFileName(p);
+        p = p.replace(/-/g,"_");
+        p = `${targetDir}/${p}`;
+    }
+    if(!name) {
+        name = indexFileName(p);
+    }
+    dir = p;
+    return {
+        filePath: `${dir}/${name}`,
+        context: dir.substring(0,dir.lastIndexOf("/")),
+        targetDir: targetDir,
+        rootPackage: rootPackage
+    };
+
+}
+
+function indexFileName(p:string):string{
+    p = p.replace(/\\/g,"/").replace(/.ts$/,"");
+    let ind = p.lastIndexOf("/");
+    let name = p.substring(ind+1);
+    name = name.split("-").map(x=>x.substring(0,1).toUpperCase() + x.substring(1)).join("")+"Index.scala";
+    return name;
+}
+
+function pathForClass(cName:string):string{
+    return `${dir}/${cName}.scala`;
+}
+
+
